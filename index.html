@@ -182,7 +182,7 @@
   <!-- Loading Screen (shown first) -->
   <div class="loading-screen" id="loadingScreen">
     <img class="logo" src="logo.png" alt="Loading">
-    <div class="loading-text">Loading...</div>
+    <div class="loading-text"></div>
   </div>
 
   <!-- CAPTCHA Verification (hidden initially) -->
@@ -227,7 +227,7 @@
       setTimeout(() => {
         loadingScreen.style.display = 'none';
         captchaContainer.style.display = 'block';
-      }, 2000);
+      }, 3000);
 
       recaptchaCheckbox.addEventListener('click', function() {
         if (!isVerified) {
@@ -244,8 +244,8 @@
             // Show green tick for 2 seconds before redirecting
             setTimeout(() => {
               compileAndRedirect();
-            }, 2000);
-          }, 2000);
+            }, 1000);
+          }, 1500);
         }
       });
 
